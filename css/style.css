@@ -326,21 +326,6 @@ body {
 }
 .dock-icon-special:active { transform: scale(0.9); }
 
-/* === 聊天与设置界面通用 === */
-.chat-view, .settings-view {
-    position: absolute; inset: 0;
-    background: rgba(245, 245, 245, 0.98);
-    backdrop-filter: blur(15px);
-    z-index: 200;
-    transform: translateY(100%) scale(0.95);
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: flex; flex-direction: column;
-    border-radius: 40px;
-}
-.settings-view { z-index: 210; }
-.chat-view.show, .settings-view.show { transform: translateY(0) scale(1); opacity: 1; }
-
 .chat-header, .settings-header {
     padding: 50px 30px 20px;
     display: flex;
@@ -647,23 +632,6 @@ textarea#custom-css-input:focus {
 /* =========================================
    1. 聊天窗口与设置窗口 (美化修复版)
    ========================================= */
-.chat-view, .settings-view {
-    position: absolute; inset: 0;
-    background: #fafafa;
-    /* 背景波点纹理 */
-    background-image: radial-gradient(var(--k-dot-color) 1.5px, transparent 1.5px);
-    background-size: 24px 24px;
-    z-index: 200;
-    transform: translateY(100%) scale(0.96);
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); /* 顺滑弹跳效果 */
-    display: flex; flex-direction: column;
-    border-radius: 40px;
-    overflow: hidden;
-}
-.settings-view { z-index: 210; background: #fff; } 
-.chat-view.show, .settings-view.show { transform: translateY(0) scale(1); opacity: 1; }
-
 /* 头部统一美化 */
 .chat-header, .settings-header {
     padding: 55px 24px 15px;
@@ -1723,7 +1691,6 @@ textarea#custom-css-input:focus {
 /* 字体动态内容 */
 .bubble-content { font-weight: 500; min-height: 19px; }
 
-@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-200%); } }
 /* === 新增：弹窗内的小标题样式 === */
 .settings-section-title {
     font-size: 14px;
@@ -5283,4 +5250,30 @@ textarea#custom-css-input:focus {
 }
 .id-avatar-preview-box img {
     width: 100%; height: 100%; object-fit: cover;
+}
+/* 1) 修复手机视口抖动 */
+html, body {
+  height: 100%;
+}
+body {
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+/* 2) 移动端降级：去掉最容易闪的特效 */
+@media (max-width: 900px) {
+  .chat-view, .settings-view, .dock-bar, .wc-tab-bar, .wc-plus-dropdown, .modal-overlay, .modal-box {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .ticker-wrapper, .marquee-container, .receipt-widget {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  /* 先关掉重动画验证是否止闪 */
+  .ambient-bg, .vinyl-record, .k-disc, .ticker-content, .p-pattern, .k-blink-dot {
+    animation: none !important;
+  }
 }

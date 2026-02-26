@@ -74,5 +74,5 @@ function toggleSettings() {
 // --- 页面加载后立即执行的函数 ---
 document.addEventListener('DOMContentLoaded', (event) => {
     updateClock();
-    setInterval(updateClock, 1000);
+    setInterval(updateClock, 60000);
 });
