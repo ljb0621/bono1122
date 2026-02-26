@@ -53,6 +53,7 @@
                 <i class="fas fa-battery-three-quarters"></i>
             </div>
         </div>
+        <div id="danmaku-layer" class="danmaku-container"></div> 
 
 
           <div class="screen-container" id="screen">
@@ -78,17 +79,19 @@
             </div>
         </div>
 
-        <div class="music-widget">
-            <div class="music-info">
-                <div style="font-size:9px; color:#aaa; margin-bottom:5px; letter-spacing:1px;">NOW PLAYING</div>
-                <div class="music-title">Lover</div>
-                <div class="music-artist">Taylor Swift</div>
-                <div class="wave-box"><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div></div>
-            </div>
-            <div class="vinyl-record">
-                <div class="vinyl-inner" data-edit-key="music" onclick="triggerChangeImage(this, 'bg')"></div>
-            </div>
-        </div>
+        <div class="music-widget" id="home-music-widget" onclick="openMusicPlayer()">
+    <div class="music-info">
+        <div style="font-size:9px; color:#aaa; margin-bottom:5px; letter-spacing:1px;">NOW PLAYING</div>
+        <!-- 增加了 contenteditable 和 onblur 用于保存文字 -->
+        <div class="music-title" id="home-music-title" contenteditable="true" onclick="event.stopPropagation()" onblur="saveHomeMusicText()">Lover</div>
+        <div class="music-artist" id="home-music-artist" contenteditable="true" onclick="event.stopPropagation()" onblur="saveHomeMusicText()">Taylor Swift</div>
+        <div class="wave-box"><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div></div>
+    </div>
+    <div class="vinyl-record">
+        <!-- 保留了原来的换图功能，加了 stopPropagation 防止点击换图时打开播放器 -->
+        <div class="vinyl-inner" data-edit-key="music" onclick="event.stopPropagation(); triggerChangeImage(this, 'bg')"></div>
+    </div>
+</div>
 
         <div class="grid-apps">
             <div class="app-cell" data-app-id="wechat" onclick="openWeChatApp()"><div class="icon-box"><i class="fab fa-weixin" style="color:#07c160;"></i></div><span class="app-label">WeChat</span></div>
@@ -96,7 +99,7 @@
             <div class="app-cell" data-app-id="theme" onclick="toggleSettings('theme')"><div class="icon-box"><i class="fas fa-magic"></i></div><span class="app-label">Theme</span></div>
             <div class="app-cell" data-app-id="lovespace"><div class="icon-box"><i class="fas fa-heart" style="color:#e91e63;"></i></div><span class="app-label">Love Space</span></div>
             <div class="app-cell" data-app-id="worldbook"><div class="icon-box"><i class="fas fa-globe-asia"></i></div><span class="app-label">WorldBook</span></div>
-            <div class="app-cell" data-app-id="store"><div class="icon-box"><i class="fas fa-store"></i></div><span class="app-label">Store</span></div>
+            <div class="app-cell" data-app-id="presets" onclick="openPresetsApp()"><div class="icon-box"><i class="fas fa-sliders-h"></i></div><span class="app-label">Presets</span></div>
             <div class="app-cell" data-app-id="game"><div class="icon-box"><i class="fas fa-gamepad"></i></div><span class="app-label">Game</span></div>
             <div class="app-cell" data-app-id="novel"><div class="icon-box"><i class="fas fa-book-open"></i></div><span class="app-label">Novel</span></div>
         </div>
@@ -116,7 +119,7 @@
         </div>
 
         <div class="grid-apps">
-            <div class="app-cell" data-app-id="pay"><div class="icon-box"><i class="fas fa-qrcode"></i></div><span class="app-label">Pay</span></div>
+            <div class="app-cell" data-app-id="pay" onclick="openPayApp()"><div class="icon-box"><i class="fas fa-qrcode"></i></div><span class="app-label">Pay</span></div>
             <div class="app-cell" data-app-id="map"><div class="icon-box"><i class="fas fa-map-marker-alt"></i></div><span class="app-label">Map</span></div>
             <div class="app-cell" data-app-id="live" onclick="openLiveApp()">
                 <div class="icon-box" style="background: #111; border: 1px solid rgba(255,255,255,0.1);"><i class="fas fa-satellite-dish" style="color: #fff;"></i></div>
@@ -315,52 +318,24 @@
                     <i class="fas fa-search" style="margin-right:10px; font-size:12px;"></i> Search messages...
                 </div>
             </div>
+            <!-- 这里可以放你的聊天列表容器，如果有的话 -->
+        </div> <!-- ★★★ 重点：在这里闭合 tab-chats ★★★ -->
 
-            <!-- AI 聊天入口 (保留原有onclick) -->
-            <div class="wc-chat-item" onclick="openChatDetail('Hannah AI')">
-                <div class="wc-avatar">
-                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop">
-                    <div class="wc-badge"></div>
-                </div>
-                <div class="wc-info">
-                    <div class="wc-top-row">
-                        <span class="wc-name">Hannah AI</span>
-                        <span class="wc-time">14:30</span>
-                    </div>
-                    <div class="wc-msg-preview">Good afternoon! 今天天气怎么样？☁️</div>
-                </div>
-            </div>
-
-            <div class="wc-chat-item">
-                <div class="wc-avatar system">
-                    <i class="fas fa-bell" style="color:#a0aec0"></i>
-                </div>
-                <div class="wc-info">
-                    <div class="wc-top-row">
-                        <span class="wc-name">System Service</span>
-                        <span class="wc-time">Fri</span>
-                    </div>
-                    <div class="wc-msg-preview">Welcome to your minimal space.</div>
-                </div>
-            </div>
-        </div>
-
-             <!-- Tab 2: 通讯录 -->
+            
+        <!-- Tab 2: 通讯录 -->
         <div class="wc-tab-content" id="tab-contacts" style="display:none;">
             <div class="wc-search-container">
                 <div class="wc-search-bar" id="contacts-add-bar" onclick="openFriendRequestPage()" style="position:relative;">
                     <i class="fas fa-user-plus" style="margin-right:10px;"></i> Add new friends
-                    <!-- 新增：有新申请时显示的小红点 -->
                     <span id="contacts-request-dot" class="wc-request-dot" style="display:none;"></span>
                 </div>
             </div>
-
             <!-- 新的：通讯录好友列表（由 JS 动态填充） -->
             <div id="contacts-list-container"></div>
         </div>
 
 
-                   <!-- Tab 3: 朋友圈 (韩系画廊风) -->
+        <!-- Tab 3: 朋友圈 (韩系画廊风) -->
         <div class="wc-tab-content" id="tab-moments" style="display:none; padding-bottom: 20px;">
             <div id="moments-header-bg" class="moments-header-bg" 
                  style="background-image: url('https://images.unsplash.com/photo-1494859802809-d069c3b71a8a?q=80&w=400&auto=format&fit=crop'); cursor:pointer;"
@@ -371,16 +346,31 @@
             <div id="moments-feed-list"></div>
         </div>
 
-
-
         <!-- Tab 4: 个人中心 -->
         <div class="wc-tab-content" id="tab-me" style="display:none;">
             <div class="wc-me-header">
-                <div class="wc-avatar lg"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"></div>
+<!-- === 修改：给头像加个切换小按钮 === -->
+<div class="wc-avatar lg" id="me-avatar-switcher" style="position:relative;">
+    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop">
+    <!-- 点击这个小图标切换身份 -->
+    <div onclick="openIdentityModal(event)" style="position:absolute; right:-5px; bottom:-5px; width:26px; height:26px; background:#333; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:2px solid #fff; z-index:10; cursor:pointer;">
+        <i class="fas fa-sync-alt"></i>
+    </div>
+</div>
+
                 <div class="wc-me-info">
                     <div class="wc-me-name">Hannah</div>
                     <div class="wc-me-id">ID: cute_hannah</div>
                 </div>
+            </div>
+
+            <!-- === 新增：我的主人设 === -->
+            <div class="wc-menu-group" style="padding: 15px 20px;">
+                <div style="font-size: 13px; font-weight: 700; color: #333; margin-bottom: 10px;">
+                    <i class="fas fa-user-edit"></i> 我的主人设 (User Persona)
+                </div>
+                <textarea id="my-global-persona" rows="3" placeholder="例如：我是一个苦逼的互联网打工人，或者是一个每月有花不完零花钱的财阀大小姐..." style="width: 100%; border: none; background: #f9f9f9; border-radius: 12px; padding: 12px; font-size: 12px; font-family: inherit; resize: none; outline: none;" onblur="saveGlobalPersona()"></textarea>
+                <div style="font-size: 10px; color: #999; margin-top: 5px;">* AI 将读取此人设为你生成每月的工资或生活费。</div>
             </div>
 
             <div class="wc-menu-group">
@@ -395,7 +385,9 @@
             </div>
         </div>
 
+
     </div>
+
 
     <!-- 底部导航栏 (悬浮胶囊) -->
     <div class="wc-tab-bar">
@@ -448,7 +440,6 @@
 
 <!-- 【新增】在 chat-view 内部添加弹幕遮罩层 -->
 <!-- 请确保它在 chat-header 下面，chat-messages 上面 -->
-<div id="danmaku-layer" class="danmaku-container"></div>
 
 
 
@@ -477,10 +468,6 @@
                 </div>
             </div>
 
-
-            <!-- 底部输入框 -->
-            <!-- === 修改后的聊天底部输入区 (index.html) === -->
-<!-- === 修改后的聊天底部输入区 (index.html) === -->
 <!-- === 修改后的聊天底部输入区 (index.html) === -->
 <div class="chat-input-area">
     <form id="chatForm" class="chat-input-form" style="position:relative; z-index:10;">
@@ -495,15 +482,10 @@
         <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off">
         
         <!-- === 右侧区域：AI 回复 & 发送 === -->
-        <div style="display:flex; align-items:center; gap: 12px; margin-left: 8px;">
-            
-            <!-- [修改] AI 回复图标：星星形状，灰色 -->
-            <!-- 点击这个才会让 AI 回复上一句 -->
-            <i id="triggerAiReply" class="fas fa-star" title="点亮星星 (让AI回复)" style="color:#bbb; font-size:20px; cursor:pointer; transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
-            
-            <!-- 发送按钮：只上屏，不触发AI -->
-            <button type="submit" title="发送 (仅上屏)"><i class="fas fa-paper-plane"></i></button>
-        </div>
+      <div style="display:flex; align-items:center; gap: 8px; margin-left: 8px;">
+    <i id="triggerAiReply" class="fas fa-star" title="点亮星星 (让AI回复)" style="color:#bbb; font-size:20px; cursor:pointer; transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
+    <button type="submit" title="发送 (仅上屏)"><i class="fas fa-paper-plane"></i></button>
+</div>
 
     </form>
 
@@ -549,14 +531,26 @@
                     <div class="plus-icon"><i class="fas fa-yen-sign" style="color:#fa9d3b;"></i></div>
                     <span>转账</span>
                 </div>
-                <div class="plus-item" onclick="sendVoiceMsg()">
-                    <div class="plus-icon"><i class="fas fa-microphone"></i></div>
-                    <span>语音</span>
-                </div>
+                <div class="plus-item" onclick="openVoiceActionModal()">
+    <div class="plus-icon"><i class="fas fa-microphone"></i></div>
+    <span>语音</span>
+</div>
+
                 <div class="plus-item" onclick="sendMusicShare()">
                     <div class="plus-icon"><i class="fas fa-music"></i></div>
                     <span>一起听</span>
                 </div>
+                <div class="plus-item" onclick="openOfflineMode()">
+    <div class="plus-icon" style="background:#2b2b2b; color:#fff; border:1px solid #2b2b2b;"><i class="fas fa-book-open"></i></div>
+    <span>线下模式</span>
+</div>
+<!-- === 【新增】剧情总结功能入口 === -->
+<div class="plus-item" onclick="openSummaryPage()">
+
+    <div class="plus-icon"><i class="fas fa-clipboard-list"></i></div>
+    <span>剧情总结</span>
+</div>
+
             </div>
         </div>
     </div>
@@ -566,6 +560,60 @@
 
 
         </div>
+<!-- === [新增] 预设管理 APP === -->
+<div class="app-fullscreen-view" id="presetsApp">
+    <div class="wc-header" style="background:#fff;">
+        <span onclick="closePresetsApp()"><i class="fas fa-chevron-down"></i> Presets</span>
+        <div class="wc-header-icons">
+            <!-- 新增导入导出按钮 -->
+            <i class="fas fa-file-export" onclick="exportPresets()" title="导出预设" style="font-size:16px;"></i>
+            <i class="fas fa-file-import" onclick="triggerImportPresets()" title="导入预设" style="font-size:16px;"></i>
+            <i class="fas fa-plus" onclick="createNewPreset()" title="新建" style="margin-left:10px;"></i>
+        </div>
+        <input type="file" id="preset-import-file" accept=".json" style="display:none;" onchange="handleImportPresets(this)">
+    </div>
+    <!-- 下面的列表容器不变 -->
+    <div class="wc-body-container" style="background:#f7f7f7;">
+        <div id="presets-list-container" class="presets-list"></div>
+    </div>
+    
+    <!-- 预设编辑器 -->
+    <div id="preset-editor" class="preset-editor-overlay">
+    <div class="wc-header" style="background:#fff;">
+        <span onclick="closePresetEditor()"><i class="fas fa-chevron-left"></i> Back</span>
+        <span onclick="savePresetEditor()">Save</span>
+    </div>
+    <div class="wc-body-container" style="padding:20px; background:#fff;">
+        <!-- 原有的名称输入 -->
+        <div class="form-group">
+            <label>预设名称</label>
+            <input type="text" id="pe-name">
+        </div>
+        <!-- 原有的 Prompt 输入 -->
+        <div class="form-group">
+            <label>系统提示词 (System Prompt)</label>
+            <textarea id="pe-sys-prompt" rows="6" placeholder="System instructions..."></textarea>
+        </div>
+        
+        <!-- === 新增：正则脚本模块 (Regex Scripts) === -->
+        <div class="settings-section-title" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+            <span>正则脚本 (Regex Scripts)</span>
+            <button class="btn-secondary" style="height:24px; font-size:12px; padding:0 8px;" onclick="addRegexScriptItem()">+ 添加</button>
+        </div>
+        <div id="pe-regex-container" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+            <!-- JS 动态插入脚本项 -->
+        </div>
+
+        <!-- 原有的越狱输入 -->
+        <div class="form-group">
+            <label>越狱/前置指令 (Jailbreak)</label>
+            <textarea id="pe-jailbreak" rows="3"></textarea>
+        </div>
+        
+        <button class="btn-secondary" style="color:red; margin-top:20px;" onclick="deleteCurrentPreset()">删除此预设</button>
+    </div>
+</div>
+</div>
 
 
         <!-- Settings View -->
@@ -804,9 +852,38 @@
         </div>
 
         <div class="form-group">
+            <!-- 开场白设置 -->
+<div class="form-group">
+    <label>开场白来源 (Greeting Source)</label>
+    <select id="cs-greeting-mode" onchange="toggleGreetingEditor()">
+        <option value="none">不开场白</option>
+        <option value="custom">自定义开场白</option>
+        <option value="tavern">读取酒馆卡开场白</option>
+        <!-- === 【新增】更换开场白的提示 === -->
+<div class="form-text" style="color: #ff7e67; font-weight: bold; margin-top: -5px; margin-bottom: 10px;">
+    <i class="fas fa-info-circle"></i> 注意：更换开场白后，为保证剧情连贯，请选择清空角色聊天记录。
+</div>
+
+    </select>
+</div>
+
+<div class="form-group" id="cs-greeting-custom-box">
+    <label>自定义开场白</label>
+    <textarea id="cs-greeting-custom" rows="3" placeholder="你自己写第一句..."></textarea>
+</div>
+
+<div class="form-group" id="cs-greeting-tavern-box">
+    <label>酒馆卡开场白列表</label>
+    <div id="cs-greeting-list" class="worldbook-checklist-container"></div>
+    <textarea id="cs-greeting-tavern" rows="3" readonly placeholder="选择后在这里预览"></textarea>
+</div>
+
+
             <label>人设 (Persona) <span style="color:red">*</span></label>
             <textarea id="cs-persona" rows="6" placeholder="角色的核心性格、身份设定..." style="height:auto; font-size:13px;"></textarea>
+            
         </div>
+
 
         <!-- 世界书 (改为多选框容器，JS动态加载) -->
         <div class="form-group">
@@ -899,6 +976,9 @@
 
         <!-- 保存按钮，放在最底部 -->
         <button class="btn-save" onclick="saveChatSettings()" style="margin-top: 30px; margin-bottom: 30px;">保存配置</button>
+       <button class="btn-secondary" onclick="clearCurrentChatHistory()" style="color:#ff4d4f; border-color:#ff4d4f; margin-top:10px; margin-bottom: 30px;">
+    <i class="fas fa-exclamation-triangle"></i> 清空聊天记录
+</button>
     </div>
 </div>
 <!-- 好友资料页（复用 chat-settings-page 的样式） -->
@@ -1647,6 +1727,659 @@
 </div>
 
 
+<!-- === [新增] 气泡右键菜单 === -->
+<div id="wc-bubble-menu" class="wc-bubble-menu">
+    <div class="wc-menu-item" onclick="handleMenuAction('copy')">
+        <i class="far fa-copy"></i> 复制
+    </div>
+    <div class="wc-menu-item" onclick="handleMenuAction('quote')">
+        <i class="fas fa-quote-right"></i> 引用
+    </div>
+    <div class="wc-menu-item" onclick="handleMenuAction('forward')">
+        <i class="fas fa-share"></i> 多选转发
+    </div>
+    <div class="wc-menu-item" onclick="handleMenuAction('delete')" style="color:#ff4d4f;">
+        <i class="far fa-trash-alt"></i> 删除
+    </div>
+    <div id="menu-btn-revoke" class="wc-menu-item" onclick="handleMenuAction('revoke')">
+        <i class="fas fa-undo"></i> 撤回
+    </div>
+    <div id="menu-btn-regen" class="wc-menu-item" onclick="handleMenuAction('regen')">
+    <i class="fas fa-rotate-left"></i> 重回
+</div>
+
+</div>
+
+<!-- === [修改] 多选操作底部栏 (增加删除按钮) === -->
+<div id="wc-multi-select-bar" class="wc-multi-select-bar">
+    <!-- 转发按钮 -->
+    <div onclick="executeMultiForward()">
+        <i class="fas fa-share-square"></i>
+        <span>转发</span>
+    </div>
+    <!-- 删除按钮 -->
+    <div onclick="executeMultiDelete()" style="color: #ff4d4f;">
+        <i class="far fa-trash-alt" style="background:#ffecec; color:#ff4d4f;"></i>
+        <span>删除</span>
+    </div>
+    <!-- 取消按钮 -->
+    <div onclick="exitMultiSelectMode()">
+        <i class="fas fa-times"></i>
+        <span>取消</span>
+    </div>
+</div>
+
+
+<!-- === [新增] 转发好友选择弹窗 === -->
+<div id="forward-target-modal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>选择转发对象</span>
+            <i class="fas fa-times" onclick="closeForwardModal()"></i>
+        </div>
+        <div class="modal-body">
+            <div id="forward-friend-list" class="friend-checklist">
+                <!-- JS 填充 -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeForwardModal()">取消</button>
+            <button class="btn-confirm" onclick="confirmForward()">发送</button>
+        </div>
+    </div>
+</div>
+<!-- === [新增] 聊天记录详情全屏弹窗 === -->
+<div id="history-detail-modal" class="k-full-modal" style="background: #f7f7f7; z-index: 2500;">
+    <div class="k-modal-header" style="background: #fff;">
+        <i class="fas fa-chevron-left" onclick="closeHistoryDetail()" style="cursor:pointer; font-size:18px;"></i>
+        <span id="history-detail-title" style="font-size: 15px; font-weight: 600;">聊天记录</span>
+        <div style="width:20px;"></div> <!-- 占位 -->
+    </div>
+    <div id="history-detail-content" class="wc-body-container" style="padding: 0;">
+        <!-- JS 会在这里填充具体消息 -->
+    </div>
+</div>
+<!-- 全局音频标签 -->
+<audio id="global-audio-player"></audio>
+
+<!-- 音乐播放器界面 -->
+<div class="app-fullscreen-view music-player-view" id="musicPlayerView">
+    <div class="wc-header">
+        <i class="fas fa-chevron-down" onclick="closeMusicPlayer()" style="cursor:pointer; padding:10px;"></i>
+        <span>Music Player</span>
+        <i class="fas fa-plus" onclick="triggerImportMusic()" style="cursor:pointer; padding:10px;"></i>
+    </div>
+    
+    <div class="mp-cover-area">
+        <img id="mp-cover-display" class="mp-cover-img" src="https://images.unsplash.com/photo-1459749411177-d4a428c37ae5?q=80&w=300&auto=format&fit=crop">
+    </div>
+
+    <div class="mp-controls">
+        <div style="font-size:20px; font-weight:700;" id="mp-title-display">Select a Song</div>
+        <div style="font-size:12px; color:#888; margin-top:5px;" id="mp-artist-display">...</div>
+        
+        <div class="mp-btn-row">
+            <i class="fas fa-step-backward mp-btn" onclick="playPrevSong()"></i>
+            <i class="fas fa-play-circle mp-btn-lg" id="mp-play-btn" onclick="toggleMusicPlay()"></i>
+            <i class="fas fa-step-forward mp-btn" onclick="playNextSong()"></i>
+        </div>
+    </div>
+
+    <div class="mp-playlist" id="mp-playlist-container">
+        <!-- 列表由 JS 生成 -->
+    </div>
+    
+    <!-- 隐藏的文件输入框 -->
+    <input type="file" id="music-file-input" accept="audio/*" style="display:none;" onchange="handleMusicFile(this)">
+</div>
+<!-- === [新增] 线下模式 (Offline / Tavern Mode) === -->
+<div id="offlineModeView" class="offline-mode-view">
+    <div id="offline-bg-layer"></div>
+
+    <!-- 顶部导航 -->
+    <div class="offline-header">
+        <div class="oh-left" onclick="closeOfflineMode()">
+            <i class="fas fa-times" style="font-size: 20px;"></i>
+        </div>
+        <div class="oh-center">
+            <span id="offline-char-name">HANNAH</span>
+            <div class="oh-status-dot"></div>
+        </div>
+        <div class="oh-right" style="display:flex; gap:15px;">
+            <!-- 设置按钮 -->
+            <i class="fas fa-sliders-h" onclick="toggleOfflineSettings()" style="font-size: 18px;"></i>
+            <i class="fas fa-heart-pulse" onclick="toggleMindCard(event)" style="font-size: 18px;"></i>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div id="offline-log-container" class="offline-content"></div>
+
+    <!-- 底部输入区 -->
+    <div class="offline-input-area">
+        <div class="offline-tools">
+            <span onclick="insertOfflineAction('*')">*动作*</span>
+            <span onclick="insertOfflineAction('「')">「说话」</span>
+            <!-- 原有的弹幕开关 -->
+            <span id="offline-danmaku-btn" onclick="toggleDanmaku()">弹幕开关</span>
+            <!-- [新增] 剧情选项开关 -->
+            <span id="offline-options-btn" onclick="toggleOfflineOptions()">选项分支: OFF</span>
+        </div>
+        <div class="offline-textarea-wrap">
+            <textarea id="offline-input" placeholder="描述你的动作或语言... (Enter 发送)" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendOfflineMessage();}"></textarea>
+            <button class="offline-send-btn" onclick="sendOfflineMessage()"><i class="fas fa-arrow-up"></i></button>
+        </div>
+    </div>
+
+    <!-- [新增] 线下设置面板 -->
+   <div id="offline-settings-panel" class="offline-settings-modal">
+    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+        <span style="font-weight:700;">线下模式设置</span>
+        <i class="fas fa-chevron-down" onclick="toggleOfflineSettings()"></i>
+    </div>
+    
+    <div class="offline-settings-scroll" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+        <div class="form-group">
+            <label>选择预设 (Preset)</label>
+            <select id="offline-active-preset" onchange="saveOfflineConfig()">
+                <!-- JS 填充 -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>回复最大字数 (Target Length): <span id="off-len-val">200</span></label>
+            <input type="range" id="offline-max-len" min="50" max="5000" step="50" oninput="document.getElementById('off-len-val').innerText=this.value; saveOfflineConfig();">
+            <div class="form-text">注意：这只是给 AI 的建议长度，并非绝对截断。</div>
+        </div>
+
+        <hr class="settings-divider">
+
+        <!-- 新增：背景图设置 -->
+        <div class="form-group">
+            <label>自定义背景图 (Background)</label>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="offline-bg-input" placeholder="输入图片 URL" onchange="saveOfflineConfig()">
+                <button class="btn-secondary" onclick="document.getElementById('global-img-changer').click(); window.tempImgTarget='offline';" style="width:40px;"><i class="fas fa-upload"></i></button>
+            </div>
+        </div>
+
+        <!-- 新增：自定义 CSS -->
+        <div class="form-group">
+            <label>模式专属 CSS (Custom CSS)</label>
+            <textarea id="offline-custom-css" rows="4" placeholder="/* 仅在此模式生效的 CSS */&#10;.offline-entry { font-size: 16px; }" onchange="saveOfflineConfig()"></textarea>
+        </div>
+    </div>
+</div>
+
+    <!-- [新增] 修改消息页面 -->
+    <div id="offline-modify-page" class="modify-modal-view">
+        <div class="modify-header">
+            <span onclick="closeModifyPage()" style="color:#999; cursor:pointer;">取消</span>
+            <span>修改内容</span>
+            <span onclick="confirmModifyOffline()" style="color:#2b2b2b; cursor:pointer;">完成</span>
+        </div>
+        <div class="modify-body">
+            <textarea id="modify-text-input" class="modify-textarea"></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- === [新增] 线下模式：重回确认弹窗 === -->
+<div id="offline-regen-modal" class="modal-overlay">
+    <div class="modal-box" style="width: 280px; text-align: center;">
+        <div class="modal-body" style="padding: 30px 20px; background: #fff;">
+            <i class="fas fa-undo-alt" style="font-size: 32px; color: #333; margin-bottom: 15px;"></i>
+            <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">重新生成？</div>
+            <div style="font-size: 13px; color: #888; line-height: 1.5;">
+                这将删除此条及之后的所有内容，<br>并让 AI 重新尝试写入。
+            </div>
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid #f0f0f0;">
+            <button class="btn-cancel" onclick="closeRegenModal()">取消</button>
+            <button class="btn-confirm" onclick="confirmRegenAction()" style="background:#2b2b2b;">确定重回</button>
+        </div>
+    </div>
+</div>
+<!-- === [新增] 发送语音模式选择弹窗 === -->
+<div id="voice-action-modal" class="modal-overlay">
+    <style>
+        #voice-action-modal .tab-btn { color: #888; font-weight: 500; transition: 0.2s; cursor: pointer; }
+        #voice-action-modal .tab-btn.active { background: #fff; color: #333; font-weight: 700; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    </style>
+    <div class="modal-box" style="width: 320px; border-radius: 24px; padding: 20px; background: #fff; text-align: center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <span style="font-weight: 700; font-size: 16px;">发送语音</span>
+            <i class="fas fa-times" onclick="closeVoiceActionModal()" style="cursor:pointer; color:#999; font-size:18px; padding:5px;"></i>
+        </div>
+        
+        <div style="display:flex; gap: 10px; margin-bottom: 20px; background: #f5f5f5; padding: 4px; border-radius: 12px;">
+            <div class="tab-btn active" id="tab-btn-fake-voice" onclick="switchVoiceTab('fake')" style="flex:1; text-align:center; padding: 8px 0; border-radius: 8px;">伪语音</div>
+            <div class="tab-btn" id="tab-btn-real-voice" onclick="switchVoiceTab('real')" style="flex:1; text-align:center; padding: 8px 0; border-radius: 8px;">长按录音</div>
+        </div>
+
+        <!-- 伪语音面板 -->
+        <div id="voice-panel-fake" style="display:block;">
+            <textarea id="fake-voice-input" rows="3" placeholder="输入你想让它转成文字的内容 (如不填则发送无文字的假语音)..." style="width:100%; border:1px solid #eee; border-radius:12px; padding:12px; font-size:13px; resize:none; outline:none; background:#fafafa; margin-bottom:15px;"></textarea>
+            <button class="btn-confirm" onclick="sendFakeVoice()" style="width:100%; border-radius:12px; height:44px; background:#2b2b2b; color:#fff;">发送</button>
+        </div>
+
+        <!-- 真实录音面板 -->
+        <div id="voice-panel-real" style="display:none; padding: 20px 0; flex-direction: column; align-items: center;">
+            <button id="modalHoldToTalkBtn" style="width:110px; height:110px; border-radius:50%; border:none; background:#f5f5f5; color:#333; font-size:14px; font-weight:600; box-shadow:0 8px 25px rgba(0,0,0,0.06); transition:all 0.2s; display:flex; justify-content:center; align-items:center; flex-direction:column; gap:8px; cursor:pointer; user-select:none;">
+                <i class="fas fa-microphone" style="font-size:28px; color: #555;"></i>
+                <span>按住说话</span>
+            </button>
+            <div style="font-size:11px; color:#999; margin-top:20px;">松开发送，将自动识别转为文字</div>
+        </div>
+    </div>
+</div>
+<!-- ========================================= -->
+<!-- [全面升级版] 剧情总结与关系 全屏页面 -->
+<!-- ========================================= -->
+<div id="summaryPageView" class="chat-settings-page-view">
+    <div class="chat-settings-page-header">
+        <i class="fas fa-chevron-left" onclick="closeSummaryPage()"></i>
+        <span>剧情总结与关系</span>
+        <!-- 顶部直接放一个一键清空按钮，用红色警示 -->
+        <i class="fas fa-trash-alt" onclick="clearAllSummaries()" style="color:#ff4d4f; font-size: 16px;" title="一键清空记忆"></i>
+    </div>
+    
+    <div class="chat-settings-page-content">
+        
+        <!-- 1. 新增：当前对话状态与手动总结控制台 -->
+        <div class="summary-settings-section" style="background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+            <div class="settings-section-title" style="margin-top:0; border-left-color: #07c160;">进度监控面板</div>
+            <div style="font-size:13px; color:#555; margin-bottom:15px; background: #f9f9f9; padding: 10px 15px; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>当前总对话轮数：</span>
+                    <span style="font-weight:800; color:#111;" id="current-total-turns">0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>最新已总结至：</span>
+                    <span style="font-weight:800; color:#07c160;">第 <span id="last-summarized-turn">0</span> 轮</span>
+                </div>
+            </div>
+
+            <div class="settings-section-title" style="border-left-color: #ff7e67;">手动精准总结</div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px;">
+                <span style="font-size:12px; color:#666;">从第</span>
+                <input type="number" id="manual-sum-start" placeholder="1" style="width:70px; height:36px; border-radius:8px; border:1px solid #ddd; text-align:center; font-family:inherit;">
+                <span style="font-size:12px; color:#666;">至</span>
+                <input type="number" id="manual-sum-end" placeholder="20" style="width:70px; height:36px; border-radius:8px; border:1px solid #ddd; text-align:center; font-family:inherit;">
+                <span style="font-size:12px; color:#666;">轮</span>
+            </div>
+            
+            <div style="display:flex; flex-direction: column; gap:10px;">
+                <button id="btn-manual-range" class="btn-secondary" onclick="generateManualSummary()" style="height: 40px; background:#f0f0f0; border:none; color:#333; font-weight:600;">
+                    <i class="fas fa-crosshairs"></i> 提取指定区间
+                </button>
+                <button id="btn-manual-latest" class="btn-confirm" onclick="generateSummarySinceLast()" style="height: 40px; border-radius: 10px;">
+                    <i class="fas fa-bolt"></i> 一键总结最新未总结部分
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. 自动总结设置区 -->
+        <div class="summary-settings-section">
+            <div class="settings-section-title">自动触发设置</div>
+            <div class="input-group">
+                <label>每 N 轮对话自动总结 (设为0关闭)</label>
+                <input type="number" id="summary-turn-count" value="20" onchange="saveSummaryConfig()">
+            </div>
+            <div class="input-group">
+                <label>自动总结字数 (约)</label>
+                <input type="number" id="summary-word-count" value="200" onchange="saveSummaryConfig()">
+            </div>
+            <div class="input-group">
+                <label>AI 总结提示词 (Prompt)</label>
+                <textarea id="summary-prompt" rows="2" onchange="saveSummaryConfig()" placeholder="例如：请以我的口吻，用亲昵的语气总结我们最近的进展。"></textarea>
+            </div>
+        </div>
+
+        <hr class="settings-divider" style="margin: 20px 0;">
+
+        <!-- 3. 已有总结列表 (放大版) -->
+        <div>
+            <div class="settings-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>已生成的记忆存档</span>
+                <button class="btn-secondary" onclick="addNewSummaryItem()" style="height: 28px; width:auto; padding: 0 12px; font-size: 11px; background:#fff; border:1px solid #ddd;">+ 手动编写</button>
+            </div>
+            <div id="summary-list-container" class="summary-list-container">
+                <!-- JS 动态填充 -->
+                <div class="summary-empty-state">大脑空空，暂无记忆</div>
+            </div>
+            <button id="grand-summary-btn" class="btn-secondary" onclick="generateGrandSummary()" style="width: 100%; margin-top: 15px; height: 44px; border:1px solid #111; color:#111;">
+                <i class="fas fa-brain"></i> 对以上所有记忆进行【大融合】
+            </button>
+        </div>
+
+        <hr class="settings-divider" style="margin: 25px 0;">
+
+        <!-- 4. 关系进度条 -->
+        <div>
+            <div class="settings-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>好感度与关系事件</span>
+                <button class="btn-secondary" onclick="addRelationshipLog()" style="height: 28px; width:auto; padding: 0 12px; font-size: 11px; background:#fff; border:1px solid #ddd;">+ 添加节点</button>
+            </div>
+            <div id="relationship-log-container" class="summary-list-container" style="max-height: 250px;">
+                <!-- JS 动态填充 -->
+                <div class="summary-empty-state">暂无关系跃升事件</div>
+            </div>
+        </div>
+        <div style="height: 60px;"></div> <!-- 底部留白防遮挡 -->
+    </div>
+</div>
+<!-- ============================================== -->
+<!-- [韩系简约版] 钱包 APP (全中文) -->
+<!-- ============================================== -->
+<div class="app-fullscreen-view" id="payApp" style="background: #fafafa;">
+    
+    <!-- 顶部导航 -->
+    <div class="k-header" style="background: transparent; padding-top: 50px; border:none;">
+        <i class="fas fa-chevron-left" onclick="closePayApp()" style="font-size: 20px; cursor:pointer; color:#333;"></i>
+        <span style="font-weight: 700; font-size: 16px; color:#333; letter-spacing: 1px;">我的钱包</span>
+        <span onclick="openPaySubPage('bill')" style="font-size: 12px; color:#666; cursor:pointer;">账单</span>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="k-body-container" style="padding: 10px 24px 30px; display: flex; flex-direction: column; gap: 20px;">
+        
+        <!-- 顶部提示 -->
+        <div style="display:flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #999;">资产总览</span>
+            <div onclick="generateInitialWealthByAI()" id="btn-ai-wealth" style="font-size: 11px; color: #555; cursor:pointer; background: #eee; padding: 6px 12px; border-radius: 15px;">
+                <i class="fas fa-magic"></i> AI 测算身价
+            </div>
+        </div>
+
+        <!-- 1. 零钱卡片 (奶白风格) -->
+        <div class="pay-korean-card">
+            <div class="pay-label-sm">当前零钱</div>
+            <div class="pay-num-lg">¥ <span id="pay-total-balance">0.00</span></div>
+            
+            <div style="margin-top: 25px; display:flex; justify-content: space-between; align-items: center;">
+                <span style="font-size:10px; color:#ccc;">用于日常支付</span>
+                <!-- 这个按钮触发增加余额/小游戏 -->
+                <button class="pay-pill-btn" onclick="addBalancePrompt()">+ 充值</button>
+            </div>
+        </div>
+
+        <!-- 2. 银行卡 (高级银灰风格) -->
+        <div class="pay-silver-card">
+            <div style="display:flex; justify-content:space-between;">
+                <div class="pay-label-sm" style="color:#777;">银行储蓄卡</div>
+                <i class="fab fa-cc-visa" style="font-size: 20px; opacity: 0.3;"></i>
+            </div>
+            <div class="pay-num-lg" style="font-size: 28px; color:#444;">¥ <span id="pay-bank-balance">0.00</span></div>
+            
+            <div style="margin-top: 20px; display:flex; gap:10px; justify-content:flex-end;">
+                <button class="pay-pill-btn outline" onclick="payActionPrompt('withdraw')">提现</button>
+                <button class="pay-pill-btn outline" onclick="payActionPrompt('recharge')">转入零钱</button>
+            </div>
+        </div>
+
+        <div style="font-size: 12px; color: #999; margin-top: 10px;">更多服务</div>
+
+        <!-- 3. 功能列表 (简约列表) -->
+        <div class="pay-simple-list">
+            <!-- 余额宝 -->
+            <div class="pay-simple-item" onclick="openPaySubPage('yuebao')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box"><i class="fas fa-piggy-bank"></i></div>
+                    <div>
+                        <div class="pay-item-title">小金库 (理财)</div>
+                        <div class="pay-item-desc">昨日收益 <span style="color:#d4a373;">+<span id="pay-yuebao-yesterday">0.00</span></span></div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+
+            <!-- 职业 -->
+            <div class="pay-simple-item" onclick="openPaySubPage('career')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box"><i class="fas fa-user-tag"></i></div>
+                    <div>
+                        <div class="pay-item-title">我的身份</div>
+                        <div class="pay-item-desc">设定工资/生活费发放</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+
+            <!-- 亲密付 -->
+            <div class="pay-simple-item" onclick="openPaySubPage('intimate')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box"><i class="fas fa-heart"></i></div>
+                    <div>
+                        <div class="pay-item-title">亲密付</div>
+                        <div class="pay-item-desc">给 AI 开通额度</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+
+            <!-- 打工 -->
+            <div class="pay-simple-item" onclick="openPaySubPage('parttime')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box"><i class="fas fa-coffee"></i></div>
+                    <div>
+                        <div class="pay-item-title">兼职打工</div>
+                        <div class="pay-item-desc">赚取零花钱</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 子页面：账单 (全中文) === -->
+    <div id="pay-page-bill" class="pay-sub-page">
+        <div class="k-header" style="background:#fff; border-bottom:1px solid #f0f0f0;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('bill')" style="cursor:pointer; color:#333;"></i>
+            <span style="font-weight:700; color:#333;">账单明细</span>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="k-body-container" id="pay-bill-list" style="background:#fafafa; padding:20px;"></div>
+    </div>
+
+    <!-- === 子页面：小金库/余额宝 === -->
+    <div id="pay-page-yuebao" class="pay-sub-page" style="background:#fafafa;">
+        <div class="k-header" style="background:transparent;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('yuebao')" style="cursor:pointer; color:#333;"></i>
+            <span style="font-weight:700; color:#333;">小金库</span><div style="width:20px;"></div>
+        </div>
+        <div class="k-body-container" style="padding:20px;">
+            <div class="pay-korean-card" style="text-align:center; padding:40px 20px;">
+                <div style="font-size:12px; color:#999;">总资产 (元)</div>
+                <div style="font-size:40px; font-weight:300; color:#333; margin:10px 0;" id="yb-detail-balance">0.00</div>
+                <div style="font-size:12px; color:#d4a373;">累计收益 +<span id="yb-total-profit">0.00</span></div>
+                
+                <div style="display:flex; justify-content:center; gap:15px; margin-top:30px;">
+                    <button class="pay-pill-btn" style="width:100px;" onclick="handleYuebao('in')">转入</button>
+                    <button class="pay-pill-btn outline" style="width:100px;" onclick="handleYuebao('out')">转出</button>
+                </div>
+            </div>
+            <div style="margin-top:30px; font-size:12px; color:#999; margin-bottom:10px;">收益记录</div>
+            <div id="yb-profit-list" class="pay-simple-list"></div>
+        </div>
+    </div>
+
+    <!-- === 子页面：身份设置 === -->
+    <div id="pay-page-career" class="pay-sub-page" style="background:#fafafa;">
+        <div class="k-header" style="background:#fff;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('career')" style="cursor:pointer; color:#333;"></i>
+            <span style="font-weight:700; color:#333;">身份设置</span><div style="width:20px;"></div>
+        </div>
+        <div class="k-body-container" style="padding:20px;">
+            <div class="pay-korean-card">
+                <div class="form-group">
+                    <label>当前身份</label>
+                    <select id="career-type-select" style="background:#f5f5f5; border:none;">
+                        <option value="student">学生 (领生活费)</option>
+                        <option value="rich">富二代 (领零花钱)</option>
+                        <option value="worker">打工人 (发工资)</option>
+                        <option value="freelance">自由职业 (结项目款)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>每月发钱日期 (1-28号)</label>
+                    <input type="number" id="career-day-input" placeholder="例如：15" style="background:#f5f5f5; border:none;">
+                </div>
+                <div class="form-group">
+                    <label>每月金额 (元)</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="number" id="career-amount-input" style="background:#f5f5f5; border:none;">
+                        <button class="pay-pill-btn outline" style="width:auto; white-space:nowrap;" onclick="generateCareerAmountByAI()" id="btn-gen-salary">AI测算</button>
+                    </div>
+                </div>
+                <button class="pay-pill-btn" style="width:100%; height:44px; margin-top:10px;" onclick="saveCareerConfig()">保存设定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 子页面：亲密付 === -->
+    <div id="pay-page-intimate" class="pay-sub-page" style="background:#fafafa;">
+        <div class="k-header" style="background:#fff;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('intimate')" style="cursor:pointer; color:#333;"></i>
+            <span style="font-weight:700; color:#333;">亲密付</span>
+            <i class="fas fa-plus" onclick="openBindIntimateModal()" style="cursor:pointer; color:#333;"></i>
+        </div>
+        <div class="k-body-container" style="padding:20px;">
+            <div style="font-size:12px; color:#999; margin-bottom:15px; text-align:center;">已绑定的 AI 可以使用你的余额</div>
+            <div id="intimate-list-container" style="display:flex; flex-direction:column; gap:10px;"></div>
+        </div>
+    </div>
+
+    <!-- === 子页面：兼职 === -->
+    <div id="pay-page-parttime" class="pay-sub-page" style="background:#fff;">
+        <div class="k-header" style="background:transparent;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('parttime')" style="cursor:pointer; color:#333;"></i>
+            <span style="font-weight:700; color:#333;">兼职打工</span><div style="width:20px;"></div>
+        </div>
+        <div class="k-body-container" style="padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; height:80%;">
+            <div style="width:100px; height:100px; background:#f5f5f5; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:40px; margin-bottom:20px;">☕️</div>
+            <div style="font-size:16px; font-weight:700; color:#333;">咖啡店打杂</div>
+            <div style="font-size:12px; color:#999; margin-top:5px; margin-bottom:40px;">点击按钮干活，赚取微薄收入</div>
+            
+            <button id="btn-work-hard" style="width:120px; height:120px; border-radius:50%; background:#333; color:#fff; border:none; font-size:16px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.1); cursor:pointer;" onpointerdown="this.style.transform='scale(0.95)'" onpointerup="this.style.transform='scale(1)'; doPartTimeWork();">干活！</button>
+            <div id="work-feedback" style="margin-top:20px; font-size:16px; font-weight:700; color:#d4a373; opacity:0; transition:0.3s;">+ ¥15.00</div>
+        </div>
+    </div>
+</div>
+<!-- Pay 模块结束 -->
+
+
+<!-- ============================================== -->
+<!-- [全新重制版] 抢金币小游戏全屏遮罩 (韩系奶油磨砂风) -->
+<!-- ============================================== -->
+<div id="coin-game-view" class="app-fullscreen-view" style="background: rgba(248, 249, 250, 0.85); z-index:4000; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);">
+    <div style="padding: 80px 24px 20px; text-align:center; display: flex; flex-direction: column; align-items: center;">
+        <div style="font-family: 'Montserrat', sans-serif; font-size:26px; font-weight:900; color: #2b2b2b; letter-spacing: 1px;">COIN RUSH.</div>
+        <div id="cg-target" style="font-size:12px; margin-top:12px; color:#b45309; background: rgba(245, 158, 11, 0.1); padding: 6px 16px; border-radius: 20px; font-weight: 600;">目标：收集 10 个金币</div>
+        
+        <div style="display: flex; justify-content: space-around; width: 100%; margin-top: 35px; background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02);">
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size:10px; color:#999; font-weight: 600; letter-spacing: 1px;">TIME LEFT</span>
+                <span id="cg-countdown" style="font-size:38px; font-weight:300; color:#2b2b2b; font-family:'Montserrat', sans-serif;">10.0</span>
+            </div>
+            <div style="width: 1px; background: #f0f0f0;"></div>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size:10px; color:#999; font-weight: 600; letter-spacing: 1px;">COLLECTED</span>
+                <span id="cg-score" style="font-size:38px; font-weight:700; color:#07c160; font-family:'Montserrat', sans-serif;">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 金币生成舞台 -->
+    <div id="cg-play-area" style="flex:1; position:relative; overflow:hidden;"></div>
+</div>
+
+<!-- ============================================== -->
+<!-- [新增] 钱包专属：韩系高级定制弹窗 (替代系统 Alert/Prompt) -->
+<!-- ============================================== -->
+<div id="k-dialog-overlay" class="modal-overlay" style="z-index: 5000;">
+    <div class="modal-box" style="width: 300px; padding: 0; border-radius: 24px; text-align: center; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);">
+        <div style="padding: 30px 20px 20px;">
+            <div id="k-dialog-title" style="font-size: 16px; font-weight: 700; color: #2b2b2b; margin-bottom: 10px;">提示</div>
+            <div id="k-dialog-desc" style="font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 20px;">内容</div>
+            <!-- 仅在 Prompt 模式下显示的输入框 -->
+            <input type="number" id="k-dialog-input" style="display:none; width: 100%; border: 1px solid #eee; background: #f9f9f9; padding: 12px 15px; border-radius: 12px; font-size: 16px; text-align: center; outline: none; transition: 0.3s;">
+        </div>
+        <div style="display: flex; border-top: 1px solid #f0f0f0;">
+            <div id="k-dialog-cancel" style="flex: 1; padding: 15px 0; font-size: 14px; color: #999; cursor: pointer; border-right: 1px solid #f0f0f0;">取消</div>
+            <div id="k-dialog-confirm" style="flex: 1; padding: 15px 0; font-size: 14px; font-weight: 700; color: #2b2b2b; cursor: pointer;">确定</div>
+        </div>
+    </div>
+</div>
+
+<!-- === [更新版] 身份管理弹窗 === -->
+<div id="identity-modal" class="modal-overlay">
+  <div class="modal-box" style="width:340px;">
+    <div class="modal-header">
+      <span>身份切换</span>
+      <i class="fas fa-times" onclick="closeIdentityModal()"></i>
+    </div>
+    
+    <div class="modal-body" style="padding:20px; max-height:450px; overflow-y:auto;">
+      
+      <!-- 1. 顶部头像预览 (自动变) -->
+      <div class="id-avatar-preview-box">
+          <img id="id-preview-img" src="https://api.dicebear.com/7.x/avataaars/svg?seed=new">
+      </div>
+
+      <div class="form-group">
+        <label>选择身份</label>
+        <select id="identity-select" onchange="onIdentitySelectChange(this.value)" style="width:100%; height:40px; border:1px solid #ddd; border-radius:8px; padding:0 10px;"></select>
+      </div>
+
+      <hr class="settings-divider" style="margin:15px 0;">
+
+      <div class="form-group">
+        <label>姓名</label>
+        <input id="id-name" type="text" placeholder="例如：Hannah">
+      </div>
+
+      <!-- 性别：选自定义时显示输入框 -->
+      <div class="form-group">
+        <label>性别</label>
+        <div style="display:flex; gap:10px;">
+            <select id="id-gender-select" onchange="toggleIdGenderInput(this.value)" style="flex:1; height:40px; border:1px solid #ddd; border-radius:8px; padding:0 10px;">
+              <option value="女">女</option>
+              <option value="男">男</option>
+              <option value="custom">自定义</option>
+            </select>
+            <!-- 自定义性别输入框 (默认隐藏) -->
+            <input id="id-gender-input" type="text" placeholder="输入性别" style="flex:1; display:none;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>头像设置</label>
+        <div style="display:flex; gap:10px;">
+            <input id="id-avatar-url" type="text" placeholder="图片 URL..." oninput="updateIdPreview(this.value)">
+            <button class="btn-secondary" onclick="document.getElementById('id-avatar-file').click()" style="width:50px; padding:0;"><i class="fas fa-upload"></i></button>
+            <input id="id-avatar-file" type="file" accept="image/*" style="display:none" onchange="handleIdAvatarFile(this)">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>朋友圈背景图 (Moments Cover)</label>
+        <input id="id-moments-bg" type="text" placeholder="留空则使用默认背景">
+      </div>
+
+      <div class="form-group">
+        <label>我的人设</label>
+        <textarea id="id-persona" rows="2" placeholder="这个身份的设定..."></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer" style="padding:15px 20px;">
+      <button class="btn-cancel" onclick="createNewIdentity()" style="font-size:12px;">新建</button>
+      <button class="btn-cancel" onclick="deleteCurrentIdentity()" style="font-size:12px; color:red;">删除</button>
+      <button class="btn-confirm" onclick="saveAndSwitchIdentity()">保存并切换</button>
+    </div>
+  </div>
+</div>
 
 
 

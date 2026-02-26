@@ -199,10 +199,14 @@ body {
     background: #111;
     border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
-    animation: spin 5s linear infinite;
+    animation: spin 5s linear infinite; 
+    animation-play-state: paused; 
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     border: 2px solid #fff;
     flex-shrink: 0;
+}
+.music-widget.playing .vinyl-record {
+    animation-play-state: running;
 }
 .vinyl-inner {
     width: 30px; height: 30px;
@@ -459,8 +463,107 @@ input:checked + .slider:before { transform: translateX(18px); }
     transition: all 0.3s;
 }
 /* =========================================
-   新增：CSS编辑器与导入导出按钮样式
+   [动画]
    ========================================= */
+
+/* =========================================
+   [极致美化] 线下模式沉浸式排版与剧情选项
+   ========================================= */
+
+/* 1. 核心字体与排版美化 */
+.offline-content {
+    padding: 30px 20px !important;
+    max-width: 100%;
+}
+
+.offline-entry {
+    margin-bottom: 40px !important; /* 拉大段落间距，增加呼吸感 */
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.02); /* 极弱的分割线 */
+    position: relative;
+}
+
+/* AI 的小说正文样式 */
+.offline-entry.ai .oe-text {
+    font-family: 'Noto Serif SC', 'Songti SC', 'Playfair Display', serif !important;
+    font-size: 16.5px !important;
+    line-height: 2 !important;
+    color: #2c2c2c !important;
+    text-align: justify;
+    letter-spacing: 0.8px;
+    border-left: 3px solid #e0e0e0;
+    padding-left: 18px;
+}
+
+/* AI 的动作描写 (斜体) */
+.offline-entry.ai .oe-text i, 
+.offline-entry.ai .oe-text em {
+    color: #777 !important;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif !important;
+    font-size: 14.5px !important;
+    font-style: normal !important;
+    background: transparent !important;
+    opacity: 0.85;
+}
+
+/* AI 的说话内容 (粗体/引号内) */
+.offline-entry.ai .oe-text b, 
+.offline-entry.ai .oe-text strong {
+    color: #111 !important;
+    font-weight: 900 !important;
+    font-family: 'Noto Serif SC', 'Songti SC', serif !important;
+}
+
+/* 用户的行动记录样式 */
+.offline-entry.user .oe-text {
+    text-align: right;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif !important;
+    font-size: 15px !important;
+    color: #555 !important;
+    border-right: 3px solid #111;
+    padding-right: 18px;
+    border-left: none;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.02));
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 8px 0 0 8px;
+}
+
+/* 2. 橙光风格剧情选项 UI */
+.vn-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.vn-option-btn {
+    background: rgba(43, 43, 43, 0.95);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.vn-option-btn:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    border-color: #fff;
+}
+
+.vn-option-btn:active {
+    transform: scale(0.98);
+}
 
 textarea#custom-css-input {
     width: 100%;
@@ -1975,18 +2078,25 @@ textarea#custom-css-input:focus {
 .msg-image-content img { width: 100%; display: block; }
 
 /* 2. 语音条 */
-.msg-voice-bar {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 18px;
-    border-radius: 20px;
-    background: #fff;
-    border: 1px solid rgba(0,0,0,0.05);
-    min-width: 80px;
-    cursor: pointer;
+/* 语音气泡里的转文字 */
+.msg-voice-transcript {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(0,0,0,.15);
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
 }
-.sent .msg-voice-bar { background: #95ec69; /* 微信绿 */ color: #000; border:none; }
-.msg-voice-icon { font-size: 14px; }
-.msg-voice-duration { font-size: 12px; font-weight: 600; }
+.msg-voice-transcript.show {
+  display: block;
+}
+
+/* 长按录音中 */
+#holdToTalkBtn.recording {
+  background: #ff4d4f !important;
+  transform: scale(0.98);
+}
 
 /* 3. 转账卡片 */
 .msg-transfer-card {
@@ -3853,3 +3963,1319 @@ textarea#custom-css-input:focus {
 }
 .bb-mob-content { flex: 1; font-size: 13px; color: #555; }
 .bb-mob-user { font-size: 11px; color: #999; margin-bottom: 2px; }
+/* =========================================
+   新增：气泡右键菜单样式
+   ========================================= */
+.wc-bubble-menu {
+    position: fixed; /* 使用 fixed 定位，防止被容器遮挡 */
+    z-index: 9999;   /* 最高层级 */
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 6px 0;
+    width: 140px;
+    display: none; /* 默认隐藏 */
+    flex-direction: column;
+    overflow: hidden;
+    animation: menuFadeIn 0.2s ease;
+}
+
+/* 显示状态 */
+.wc-bubble-menu.show {
+    display: flex;
+}
+
+@keyframes menuFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.wc-bubble-menu .wc-menu-item {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.2s;
+    border-bottom: none; /* 覆盖旧样式 */
+}
+
+.wc-bubble-menu .wc-menu-item:hover {
+    background: #f0f0f0;
+}
+
+.wc-bubble-menu .wc-menu-item i {
+    width: 16px;
+    text-align: center;
+    color: #666;
+}
+
+/* =========================================
+   新增：多选模式与底部栏
+   ========================================= */
+
+/* 多选模式下，给气泡腾出左边空间放勾选框 */
+.chat-messages.selection-mode .chat-row {
+    padding-left: 10px;
+    transition: all 0.3s;
+}
+
+/* 勾选框样式 */
+.chat-row-checkbox {
+    display: none; /* 默认隐藏 */
+    align-items: center;
+    margin-right: 10px;
+}
+
+/* 进入多选模式时显示勾选框 */
+.chat-messages.selection-mode .chat-row-checkbox {
+    display: flex;
+}
+
+.wc-msg-checkbox {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    position: relative;
+    transition: 0.2s;
+}
+
+.wc-msg-checkbox.checked {
+    background: #07c160;
+    border-color: #07c160;
+}
+
+.wc-msg-checkbox.checked::after {
+    content: '✓';
+    color: #fff;
+    font-size: 14px;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 底部操作栏 */
+.wc-multi-select-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: #fff;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+    z-index: 300;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wc-multi-select-bar.show {
+    transform: translateY(0);
+}
+
+.wc-multi-select-bar div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.wc-multi-select-bar i {
+    font-size: 24px;
+    background: #f5f5f5;
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; justify-content: center; align-items: center;
+    margin-bottom: 2px;
+}
+
+/* 撤回消息的系统提示样式 */
+.msg-system-revoke {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+.msg-system-revoke span {
+    font-size: 11px;
+    color: #999;
+    background: rgba(0,0,0,0.04);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+/* =========================================
+   新增：聊天记录转发卡片样式 (合并转发)
+   ========================================= */
+.msg-history-card {
+    width: 240px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px 15px;
+    overflow: hidden;
+    /* 简单的边框，不像普通气泡那样有尖角，看起来像文件 */
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.history-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    /* 限制一行，超长省略 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-card-content {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+    /* 限制显示最多 4 行 */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.history-card-footer {
+    border-top: 1px solid #f5f5f5;
+    margin-top: 6px;
+    padding-top: 6px;
+    font-size: 10px;
+    color: #aaa;
+}
+
+/* 覆盖一下富媒体气泡的默认样式，让卡片不要带背景色 */
+.message-bubble.rich-bubble .msg-history-card {
+    background: #fff;
+    color: #333; /* 强制字体深色 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+/* 聊天记录详情页样式 */
+.history-detail-item {
+    background: #fff;
+    padding: 15px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    gap: 12px;
+}
+
+.history-detail-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #eee;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.history-detail-info {
+    flex: 1;
+    overflow: hidden; /* 防止文字撑破 */
+}
+
+.history-detail-name {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.history-detail-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+/* 覆盖一下卡片在输入框里的样式（防止太宽） */
+.msg-history-card {
+    cursor: pointer; /* 加上小手图标 */
+    transition: background 0.2s;
+}
+.msg-history-card:active {
+    background: #f5f5f5; /* 点击反馈 */
+}
+/* 新增：音乐播放器全屏界面样式 (粘贴在 style.css 末尾即可) */
+.music-player-view {
+    position: absolute; inset: 0;
+    background: #fff;
+    z-index: 200;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex; flex-direction: column;
+}
+.music-player-view.show { transform: translateY(0); }
+
+.mp-cover-area {
+    height: 350px; background: #f5f5f5;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+}
+.mp-cover-img {
+    width: 220px; height: 220px; border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 8px solid #111;
+    animation: spin 8s linear infinite;
+    animation-play-state: paused;
+}
+.music-player-view.playing .mp-cover-img { animation-play-state: running; }
+
+.mp-controls { padding: 30px; text-align: center; }
+.mp-btn-row { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 20px; }
+.mp-btn { font-size: 24px; color: #333; cursor: pointer; }
+.mp-btn-lg { font-size: 48px; color: #111; }
+
+.mp-playlist { flex: 1; overflow-y: auto; padding: 20px; border-top: 1px solid #eee; }
+.mp-item { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 12px 0; border-bottom: 1px solid #f9f9f9; 
+}
+.mp-item.active { color: #ff7e67; font-weight: bold; }
+.mp-item-info { flex: 1; }
+/* =========================================
+   [新增] 线下模式 (Offline / Tavern Mode) - 韩系黑白风
+   ========================================= */
+
+.offline-mode-view {
+    position: absolute; inset: 0;
+    background: #fff;
+    z-index: 400; /* 比普通聊天层级高，覆盖在上面 */
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+}
+.offline-mode-view.show { transform: translateY(0); }
+
+/* 背景层：模糊的角色图，营造氛围 */
+#offline-bg-layer {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    filter: grayscale(100%) blur(30px) opacity(0.1); /* 极淡的黑白背景 */
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* 顶部设计 */
+.offline-header {
+    height: 100px; padding: 50px 24px 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+.oh-left, .oh-right { color: #111; cursor: pointer; opacity: 0.6; transition: 0.3s; width: 40px; text-align: center;}
+.oh-left:hover, .oh-right:hover { opacity: 1; }
+
+.oh-center { display: flex; flex-direction: column; align-items: center; }
+#offline-char-name {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700; font-size: 16px; letter-spacing: 3px; text-transform: uppercase;
+    color: #111;
+}
+.oh-status-dot {
+    width: 4px; height: 4px; background: #111; border-radius: 50%;
+    margin-top: 6px; opacity: 0.4;
+}
+
+/* 内容区：沉浸式阅读模式 */
+.offline-content {
+    flex: 1; overflow-y: auto;
+    padding: 30px 24px;
+    display: flex; flex-direction: column; gap: 30px;
+    scroll-behavior: smooth;
+    background: transparent;
+}
+/* 隐藏滚动条 */
+.offline-content::-webkit-scrollbar { display: none; }
+
+/* 增加消息之间的距离，不再堆在一起 */
+.offline-entry {
+    display: flex; 
+    flex-direction: column; 
+    gap: 6px; 
+    margin-bottom: 25px; /* <--- 增加这个，每段对话之间拉开距离 */
+    animation: fadeUp 0.6s ease forwards;
+    position: relative;
+}
+
+/* 优化正文阅读体验 */
+.oe-text {
+    font-size: 15px; 
+    line-height: 1.8; /* <--- 增加行高，让字不挤 */
+    color: #333;
+    padding: 0 5px;
+    white-space: normal; /* <--- 改为 normal，防止 pre-wrap 导致的排版怪异 */
+    word-break: break-word; /* <--- 防止长单词撑破布局 */
+    text-align: justify; 
+}
+
+
+/* 名字标记 */
+.oe-name {
+    font-size: 10px; color: #aaa; font-weight: 600; 
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-left: 2px;
+}
+.offline-entry.user .oe-name { text-align: right; margin-right: 2px; color: #111; }
+
+/* 正文样式 - 核心设计点 */
+.oe-text {
+    font-size: 15px; line-height: 1.8; color: #333;
+    padding: 0 5px;
+    white-space: pre-wrap; /* 保留换行 */
+    text-align: justify; /* 两端对齐，更有书籍感 */
+}
+
+/* AI 回复用衬线体，更有文学感 */
+.offline-entry.ai .oe-text {
+    font-family: 'Playfair Display', 'Songti SC', serif; 
+    font-size: 16px;
+    color: #111;
+    border-left: 2px solid #eee; /* 左侧装饰线 */
+    padding-left: 15px;
+}
+
+/* 用户回复用无衬线体，现代感 */
+.offline-entry.user .oe-text {
+    font-family: 'Montserrat', sans-serif;
+    color: #555; text-align: right;
+    border-right: 2px solid #111; /* 右侧强装饰线 */
+    padding-right: 15px;
+}
+
+/* 描写动作的斜体 (Markdown *text* 渲染后) */
+.oe-text i, .oe-text em {
+    color: #888; font-family: 'Montserrat', sans-serif; font-size: 14px; font-style: italic;
+}
+.oe-text b, .oe-text strong {
+    font-weight: 700; color: #000;
+}
+
+/* 底部输入区 */
+.offline-input-area {
+    background: #fff;
+    padding: 15px 24px 40px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+.offline-tools {
+    display: flex; gap: 15px; margin-bottom: 15px;
+}
+.offline-tools span {
+    font-size: 10px; color: #999; border: 1px solid #eee;
+    padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s;
+    background: #fafafa;
+}
+.offline-tools span:hover { background: #111; color: #fff; border-color: #111; }
+
+.offline-textarea-wrap {
+    position: relative;
+    border: 1px solid #e0e0e0;
+    background: #fdfdfd;
+    border-radius: 4px; /* 方形圆角，像笔记本 */
+    padding: 5px;
+    transition: 0.3s;
+}
+.offline-textarea-wrap:focus-within { border-color: #111; background: #fff; }
+
+#offline-input {
+    width: 100%; height: 80px;
+    border: none; outline: none; resize: none;
+    padding: 12px; font-family: 'Montserrat', sans-serif; font-size: 14px;
+    background: transparent; color: #111; line-height: 1.5;
+}
+
+.offline-send-btn {
+    position: absolute; bottom: 10px; right: 10px;
+    width: 36px; height: 36px;
+    background: #111; color: #fff;
+    border: none; border-radius: 2px;
+    cursor: pointer; display: flex; justify-content: center; align-items: center;
+    transition: 0.2s;
+}
+.offline-send-btn:hover { background: #333; }
+.offline-send-btn:active { transform: scale(0.95); }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* =========================================
+   [新增] 线下模式操作栏与设置 (Offline Enhancements)
+   ========================================= */
+
+/* 1. 消息下方的操作栏 */
+.oe-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+    opacity: 0; /* 默认隐藏，悬停显示 */
+    transition: opacity 0.2s;
+}
+/* 鼠标悬停或点击时显示 */
+.offline-entry:hover .oe-actions,
+.offline-entry:active .oe-actions {
+    opacity: 1;
+}
+
+.oe-btn {
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    background: #fff;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.oe-btn:hover {
+    background: #2b2b2b;
+    color: #fff;
+    border-color: #2b2b2b;
+}
+.oe-btn.delete:hover {
+    background: #ffecec;
+    color: #ff4d4f;
+    border-color: #ff4d4f;
+}
+
+/* 2. 线下模式设置弹窗 */
+.offline-settings-modal {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%;
+    background: #fff;
+    border-radius: 24px 24px 0 0;
+    padding: 25px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 500;
+}
+.offline-settings-modal.active {
+    transform: translateY(0);
+}
+
+/* 3. 修改消息的独立弹窗 */
+.modify-modal-view {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.98);
+    z-index: 600;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+.modify-modal-view.active { transform: translateY(0); }
+
+.modify-header {
+    height: 60px; display: flex; justify-content: space-between; align-items: center;
+    padding: 0 20px; border-bottom: 1px solid #eee; font-weight: 700;
+}
+.modify-body { flex: 1; padding: 20px; }
+.modify-textarea {
+    width: 100%; height: 300px;
+    border: 1px solid #eee; border-radius: 12px;
+    padding: 15px; font-family: inherit; font-size: 14px;
+    resize: none; outline: none; background: #fafafa;
+}
+.modify-textarea:focus { background: #fff; border-color: #333; }
+
+/* =========================================
+   [新增] 预设 (Presets) APP 样式
+   ========================================= */
+.presets-list {
+    display: flex; flex-direction: column; gap: 15px; padding: 20px;
+}
+.preset-card {
+    background: #fff; padding: 15px; border-radius: 16px;
+    border: 1px solid #f0f0f0;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    cursor: pointer; transition: 0.2s;
+}
+.preset-card.active { border: 2px solid #2b2b2b; background: #fafafa; }
+.preset-info h4 { margin: 0 0 5px 0; font-size: 14px; }
+.preset-info p { margin: 0; font-size: 11px; color: #999; }
+
+.preset-editor-overlay {
+    position: absolute; inset: 0; background: #fff; z-index: 200;
+    transform: translateX(100%); transition: transform 0.3s ease;
+    display: flex; flex-direction: column;
+}
+.preset-editor-overlay.show { transform: translateX(0); }
+
+/* 线下模式底部工具栏按钮的激活状态 */
+.offline-tools span.active {
+    background: #2b2b2b !important; /* 变成黑色背景 */
+    color: #fff !important;         /* 变成白色字 */
+    border-color: #2b2b2b !important;
+    font-weight: bold;
+}
+/* === 预设 APP 美化 === */
+/* 卡片样式优化 */
+.preset-card {
+    background: #fff;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03); /* 更柔和的阴影 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 0; /* 让gap控制间距 */
+}
+.preset-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+.preset-card.active {
+    border: 2px solid #2b2b2b;
+    background: #fff;
+}
+.preset-info h4 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+}
+.preset-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 正则脚本项样式 */
+.regex-script-item {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+.regex-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.regex-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    font-family: monospace;
+}
+.regex-flags {
+    width: 50px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px;
+    font-size: 12px;
+    text-align: center;
+}
+.btn-del-regex {
+    color: #ff4d4f;
+    cursor: pointer;
+    padding: 5px;
+}
+/* =========================================
+   [CSS美化] 线下模式深度优化补丁
+   ========================================= */
+
+/* 1. 调整容器宽度：减少左右内边距，让文字显示更宽 */
+.offline-content {
+    padding: 30px 15px !important; /* 原来是 24px，改小一点让字铺更开 */
+    max-width: 100%;
+}
+
+/* 2. 消息条目间距优化 */
+.offline-entry {
+    margin-bottom: 35px !important; /* 拉大段落间距 */
+    padding-bottom: 15px;
+    border-bottom: 1px dashed rgba(0,0,0,0.03); /* 加一个极淡的分割线 */
+}
+
+/* 3. 核心字体美化 */
+.oe-text {
+    font-family: 'Bookerly', 'Georgia', 'Songti SC', serif; /* 使用衬线体，更有小说感 */
+    font-size: 16px !important; /* 字号加大 */
+    line-height: 1.9 !important; /* 行高加大，呼吸感 */
+    color: #2c2c2c !important; /* 深灰色，比纯黑柔和 */
+    text-align: justify; /* 两端对齐 */
+    letter-spacing: 0.5px;
+}
+
+/* 4. 区分“动作描写” (Markdown的 *斜体*) */
+.oe-text i, .oe-text em {
+    color: #888 !important;      /* 灰色 */
+    font-style: normal !important; /* 取消斜体，改用颜色区分，或者保留斜体看你喜好 */
+    font-family: 'Montserrat', sans-serif !important; /* 动作改回无衬线体，形成对比 */
+    font-size: 14px !important;
+    background: #f7f7f7;         /* 极淡的灰色背景块 */
+    padding: 0 4px;
+    border-radius: 4px;
+}
+
+/* 5. 区分“说话内容” (Markdown的 「」 或 "") */
+.oe-text b, .oe-text strong {
+    color: #000 !important;      /* 纯黑 */
+    font-weight: 700 !important;
+    background: transparent !important;
+}
+
+/* 6. 用户发的消息：靠右，样式区分 */
+.offline-entry.user .oe-text {
+    text-align: right;
+    font-family: 'Montserrat', sans-serif !important; /* 用户说话保持现代感 */
+    color: #555 !important;
+    border-right: 3px solid #2b2b2b; /* 右侧加粗线 */
+    padding-right: 15px;
+    border-left: none; /* 去掉原本可能有的左线 */
+    background: #fafafa;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* 7. 操作栏美化 */
+.oe-actions {
+    margin-top: 10px;
+    opacity: 0.2; /* 平时不完全隐藏，保留一点点痕迹 */
+    transition: 0.3s;
+}
+.offline-entry:hover .oe-actions {
+    opacity: 1;
+}
+/* =========================================
+   [新增] 线下模式交互优化补丁
+   ========================================= */
+
+/* 1. API 运行时：发送按钮的动画 */
+@keyframes pulse-rotate {
+    0% { transform: scale(1) rotate(0deg); box-shadow: 0 0 0 0 rgba(0,0,0,0.2); }
+    50% { transform: scale(1.1) rotate(180deg); box-shadow: 0 0 10px 0 rgba(0,0,0,0.1); }
+    100% { transform: scale(1) rotate(360deg); box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+}
+
+/* 当 API 运行时，给发送按钮添加这个类 */
+.offline-send-btn.sending {
+    pointer-events: none; /* 防止重复点击 */
+    background: #333;
+    color: #fff;
+    animation: pulse-rotate 1.2s infinite ease-in-out;
+}
+.offline-send-btn.sending i {
+    /* 图标变成加载圈圈，或者保持箭头旋转 */
+    animation: none; 
+}
+
+/* 2. 重回弹窗的美化微调 */
+#offline-regen-modal .modal-box {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+/* =========================================
+   [终极美化] 线下模式排版与玻璃拟态选项
+   ========================================= */
+
+/* 1. 核心字体与排版美化 (保留并优化) */
+.offline-content {
+    padding: 30px 20px !important;
+    max-width: 100%;
+}
+
+.offline-entry {
+    margin-bottom: 40px !important;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.02);
+    position: relative;
+}
+
+.offline-entry.ai .oe-text {
+    font-family: 'Noto Serif SC', 'Songti SC', 'Playfair Display', serif !important;
+    font-size: 16.5px !important;
+    line-height: 2 !important;
+    color: #2c2c2c !important;
+    text-align: justify;
+    letter-spacing: 0.8px;
+    border-left: 3px solid #e0e0e0;
+    padding-left: 18px;
+}
+
+.offline-entry.ai .oe-text i, 
+.offline-entry.ai .oe-text em {
+    color: #777 !important;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif !important;
+    font-size: 14.5px !important;
+    font-style: normal !important;
+    background: transparent !important;
+    opacity: 0.85;
+}
+
+.offline-entry.ai .oe-text b, 
+.offline-entry.ai .oe-text strong {
+    color: #111 !important;
+    font-weight: 900 !important;
+    font-family: 'Noto Serif SC', 'Songti SC', serif !important;
+}
+
+.offline-entry.user .oe-text {
+    text-align: right;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif !important;
+    font-size: 15px !important;
+    color: #555 !important;
+    border-right: 3px solid #111;
+    padding-right: 18px;
+    border-left: none;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.02));
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 8px 0 0 8px;
+}
+
+/* 2. [重制版] 玻璃拟态剧情选项 UI */
+.vn-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+    padding: 10px; /* 给容器一点内边距，防止按钮贴边 */
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.vn-option-btn {
+    background: rgba(255, 255, 255, 0.7); /* 半透明白色背景 */
+    backdrop-filter: blur(12px) saturate(180%); /* 核心：磨砂玻璃效果 */
+    color: #333; /* 深灰色文字，保证可读性 */
+    padding: 16px 20px;
+    border-radius: 16px; /* 更大的圆角 */
+    font-size: 14px;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif;
+    text-align: left; /* 文字靠左，像真正的选项列表 */
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05); /* 柔和的阴影 */
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.vn-option-btn:hover {
+    background: rgba(255, 255, 255, 1); /* 悬停变实白 */
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    color: #000;
+}
+
+.vn-option-btn:active {
+    transform: scale(0.99);
+    transition-duration: 0.1s;
+}
+/* =========================================
+   [更新] 统一风格的语音气泡样式
+   ========================================= */
+/* 语音气泡里的转文字区 */
+.msg-voice-transcript {
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+.msg-voice-transcript.show {
+    display: block;
+}
+
+/* 适配深色气泡 (发送方) */
+.message-bubble.sent .msg-voice-transcript {
+    border-top: 1px dashed rgba(255,255,255,0.2);
+    color: #ddd;
+}
+/* 适配浅色气泡 (接收方) */
+.message-bubble.received .msg-voice-transcript {
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    color: #666;
+}
+
+/* 语音播放条的基础样式 */
+.msg-voice-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    min-width: 60px;
+}
+/* 发送方 (自己) 的语音条靠右，时长在最左边 */
+.message-bubble.sent .msg-voice-bar {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+.msg-voice-icon {
+    font-size: 16px;
+}
+.msg-voice-duration {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 弹窗里真实录音时的按钮发光特效 */
+#modalHoldToTalkBtn.recording {
+    background: #ff4d4f !important;
+    color: #fff !important;
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(255, 77, 79, 0.4);
+}
+#modalHoldToTalkBtn.recording i {
+    color: #fff !important;
+}
+/* 开场白模块美化 */
+#cs-greeting-custom,
+#cs-greeting-tavern {
+    width: 100%;
+    min-height: 88px;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    box-sizing: border-box;
+    resize: vertical;
+    transition: all .25s ease;
+}
+
+#cs-greeting-custom:focus {
+    border-color: #333;
+    box-shadow: 0 0 0 3px rgba(0,0,0,.06);
+    background: #fff;
+}
+
+#cs-greeting-list {
+    margin-bottom: 10px;
+    max-height: 140px;
+}
+/* =========================================
+   [修复] 聊天设置中开场白列表单选按钮样式
+   ========================================= */
+.wb-checklist-item input[type="radio"] {
+    width: 18px;    /* 强制宽度为 18px */
+    height: 18px;   /* 强制高度为 18px */
+    padding: 0;     /* 移除内边距 */
+    margin-right: 12px;
+    accent-color: #2b2b2b; /* 统一勾选颜色 */
+    flex-shrink: 0;
+}
+
+#cs-greeting-list {
+    max-height: 180px; /* 稍微调高一点，防止显示不全 */
+}
+
+/* =========================================
+   [终极美化版] 剧情总结与记录界面样式
+   ========================================= */
+
+/* 1. 总结列表外部大容器：解除高度限制，让它能容纳巨大的文本框 */
+.summary-list-container {
+    max-height: none; /* 去掉之前的 200px 限制 */
+    min-height: 250px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 5px 0;
+    border: none;
+}
+
+/* 暂无内容时的提示 */
+.summary-empty-state {
+    text-align: center;
+    color: #bbb;
+    font-size: 13px;
+    padding: 40px 20px;
+    background: #fdfdfd;
+    border: 1px dashed #e0e0e0;
+    border-radius: 16px;
+    letter-spacing: 1px;
+}
+
+/* 2. 单条记忆卡片（大号卡片设计） */
+.summary-item {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 25px 20px 15px 20px; /* 顶部留足空间给轮数标签 */
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.summary-item:hover {
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+/* 3. ★ 核心：可编辑文本区域 ★ */
+.summary-item-text {
+    width: 100%;
+    min-height: 120px; /* 初始高度大幅增加，原本是40px */
+    border: none;
+    outline: none;
+    resize: vertical; /* 允许垂直拉伸，无限变大 */
+    background: transparent;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif;
+    font-size: 14.5px; /* 字号放大 */
+    line-height: 1.8; /* 行高增大，阅读更舒服 */
+    color: #333;
+    letter-spacing: 0.5px;
+    text-align: justify;
+}
+/* 获得焦点时，边框周围不要有突兀的黑框 */
+.summary-item-text:focus {
+    box-shadow: none !important;
+}
+
+/* 4. 底部操作按钮区域 */
+.summary-item-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 15px;
+    border-top: 1px dashed #f0f0f0;
+    padding-top: 12px;
+}
+.summary-item-actions i {
+    cursor: pointer;
+    color: #aaa;
+    font-size: 16px; /* 图标放大 */
+    padding: 6px;
+    transition: all 0.2s;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+.summary-item-actions i.fa-trash:hover {
+    color: #fff;
+    background: #ff4d4f;
+}
+.summary-item-actions i.fa-save:hover {
+    color: #fff;
+    background: #07c160;
+}
+
+/* 5. 顶部的设置输入框统一美化 */
+#summaryPageView .input-group input,
+#summaryPageView .input-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #e5e5e5;
+    background: #fdfdfd;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+#summaryPageView .input-group input:focus,
+#summaryPageView .input-group textarea:focus {
+    border-color: #2b2b2b;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+#summaryPageView .input-group textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+}
+/* =========================================
+   [韩系简约灰] Pay (钱包) 专属样式 (全中文版)
+   ========================================= */
+
+/* 修复小游戏层级问题：强制提升层级，确保它能盖住弹窗 */
+#coin-game-view {
+    z-index: 9999 !important; /* 最高层级 */
+}
+
+/* 1. 核心卡片：极简奶白/高级灰 */
+.pay-korean-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 25px;
+    /* 韩系核心：极柔和的投影，像浮在纸上 */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+/* 2. 银灰卡片 (银行卡) */
+.pay-silver-card {
+    /* 银色哑光渐变 */
+    background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ea 100%);
+    border-radius: 28px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    color: #555;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+/* 装饰性光泽 */
+.pay-silver-card::after {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.8) 0%, transparent 60%);
+    opacity: 0.5; pointer-events: none;
+}
+
+/* 3. 数字排版 */
+.pay-num-lg {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 36px;
+    font-weight: 300; /* 极细字体，显高级 */
+    color: #2b2b2b;   /* 深炭灰，不是纯黑 */
+    letter-spacing: -1px;
+    margin: 8px 0;
+}
+
+.pay-label-sm {
+    font-size: 11px;
+    color: #999;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+/* 4. 按钮：韩系圆润药丸形 */
+.pay-pill-btn {
+    background: #2b2b2b; /* 深色按钮 */
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 12px rgba(43,43,43,0.15);
+}
+.pay-pill-btn:active { transform: scale(0.95); }
+
+.pay-pill-btn.outline {
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #666;
+    box-shadow: none;
+}
+.pay-pill-btn.outline:active { background: #f0f0f0; }
+
+/* 5. 列表项：纯净风格 */
+.pay-simple-list {
+    background: #fff;
+    border-radius: 24px;
+    padding: 5px 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+}
+.pay-simple-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid #f9f9f9;
+    cursor: pointer;
+}
+.pay-simple-item:last-child { border-bottom: none; }
+.pay-item-left { display: flex; align-items: center; gap: 15px; }
+.pay-icon-box {
+    width: 36px; height: 36px;
+    border-radius: 12px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 15px;
+    background: #f7f7f7; color: #555; /* 统一灰色调图标 */
+}
+.pay-item-title { font-size: 14px; color: #333; font-weight: 600; }
+.pay-item-desc { font-size: 10px; color: #aaa; margin-top: 3px; }
+
+/* 6. 账单明细卡 */
+.bill-card-minimal {
+    background: #fff; padding: 15px; border-radius: 16px;
+    margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.01);
+}
+.income-text { color: #d4a373; font-weight: 600; } /* 暖棕色代表收入 */
+.expense-text { color: #333; font-weight: 600; }
+
+/* =========================================
+   [极致美化] 抢金币小游戏 & 韩系弹窗
+   ========================================= */
+
+/* 1. 金币样式 (高级光泽质感) */
+.gold-coin {
+    position: absolute;
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
+    border-radius: 50%;
+    box-shadow: 
+        0 8px 20px rgba(245, 158, 11, 0.3), 
+        inset 0 2px 5px rgba(255, 255, 255, 0.8),
+        inset 0 -3px 5px rgba(0, 0, 0, 0.1);
+    display: flex; justify-content: center; align-items: center;
+    color: #fff; font-weight: 900; font-size: 22px; font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    animation: coinPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid #fde68a;
+    transition: transform 0.1s;
+}
+.gold-coin:active { 
+    transform: scale(0.85); 
+    filter: brightness(1.1); 
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+}
+
+@keyframes coinPopIn {
+    from { transform: scale(0) rotate(-45deg); opacity: 0;}
+    to { transform: scale(1) rotate(0deg); opacity: 1;}
+}
+
+/* 2. 加分飘字动画 */
+@keyframes floatUpFade {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-50px) scale(1.3); opacity: 0; }
+}
+
+/* 3. 倒计时警告 (变红跳动) */
+.cg-time-warning { 
+    color: #ff4d4f !important; 
+    animation: pulseWarning 0.8s infinite alternate !important; 
+}
+@keyframes pulseWarning {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+
+/* 4. 输入框焦点美化 */
+#k-dialog-input:focus {
+    border-color: #2b2b2b !important;
+    background: #fff !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+/* === Pay 钱包子页面样式修复 === */
+.pay-sub-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fafafa;
+    z-index: 20; /* 保证盖在主页上面 */
+    transform: translateX(100%); /* 默认移出屏幕 */
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.pay-sub-page.show {
+    transform: translateX(0); /* 激活时滑入 */
+}
+/* ===== Pay 专用布局修复 ===== */
+#payApp {
+  display: flex;
+  flex-direction: column;
+}
+
+#payApp > .k-header {
+  height: 96px;
+  padding: 50px 24px 12px;
+  flex-shrink: 0;
+}
+
+#payApp > .k-body-container {
+  flex: 1;
+  height: auto !important;   /* 覆盖直播页的 calc 高度 */
+  overflow-y: auto;
+  padding: 10px 24px 24px;
+}
+
+/* 避免数字/按钮被裁切 */
+#payApp .pay-korean-card,
+#payApp .pay-silver-card {
+  overflow: visible;
+}
+
+#payApp .pay-num-lg {
+  line-height: 1.2;
+}
+/* === [修复] 身份切换按钮显示问题 === */
+/* 强制让容器允许子元素溢出，这样小按钮才能挂在外面 */
+#me-avatar-switcher {
+    overflow: visible !important; 
+    position: relative;
+}
+/* 保证里面的头像图片依然是圆角 */
+#me-avatar-switcher img {
+    border-radius: 22px; 
+    width: 100%; 
+    height: 100%; 
+    display: block;
+}
+
+/* 小按钮样式微调 */
+.identity-switch-mini-btn {
+    position: absolute;
+    right: -6px; 
+    bottom: -6px;
+    width: 28px; 
+    height: 28px;
+    border-radius: 50%;
+    background: #2b2b2b;
+    color: #fff;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 12px;
+    border: 3px solid #fff; /* 加粗白边，看起来更分明 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 20;
+    cursor: pointer;
+}
+
+/* === [新增] 身份弹窗里的头像预览 === */
+.id-avatar-preview-box {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    border: 3px solid #eee;
+    margin: 0 auto 20px auto; /* 居中 + 底部留空 */
+    overflow: hidden;
+    background: #f9f9f9;
+    position: relative;
+}
+.id-avatar-preview-box img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
