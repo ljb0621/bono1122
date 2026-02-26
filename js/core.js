@@ -60,17 +60,6 @@ function toggleChat() {
     }
 }
 
-/**
- * 切换设置界面的显示和隐藏
- */
-function toggleSettings() {
-    const settings = document.getElementById('settingsView');
-    if (settings) {
-        settings.classList.toggle('show');
-    }
-}
-
-
 // --- 页面加载后立即执行的函数 ---
 document.addEventListener('DOMContentLoaded', (event) => {
     updateClock();
