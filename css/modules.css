@@ -1935,7 +1935,7 @@ textarea#custom-css-input:focus {
 /* 装饰性图片，黑白滤镜 */
 .k-hero-banner::before {
     content: ''; position: absolute; top:0; right:0; width: 60%; height: 100%;
-    background: url('https://images.unsplash.com/photo-1485230946387-dd33314715fa?q=80&w=400&auto=format&fit=crop') center/cover;
+    background: url('https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?q=80&w=400&auto=format&fit=crop') center/cover;
     filter: grayscale(100%) contrast(1.2);
     opacity: 0.5;
     mask-image: linear-gradient(to right, transparent, black);
