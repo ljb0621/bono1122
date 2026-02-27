@@ -79,9 +79,15 @@ body {
     width: 100%;
     display: flex;
     overflow-x: scroll;
+    
+    /* === 修改部分开始 === */
     scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;     /* 【核心修改】强制每次滑动必须停在下一页，不能跳页 */
     scroll-behavior: smooth;
+    overscroll-behavior-x: none;  /* 禁止左右边缘的橡皮筋回弹效果，手感更“硬” */
+    /* === 修改部分结束 === */
 }
+
 .screen-container::-webkit-scrollbar { display: none; }
 
 .page {
@@ -163,8 +169,9 @@ body {
     box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     cursor: pointer;
 }
-.avatar-circle-sm img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: 0.3s; }
-.avatar-circle-sm:hover img { filter: grayscale(0%); transform: scale(1.1); }
+.avatar-circle-sm img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+.avatar-circle-sm:hover img { transform: scale(1.1); }
+
 
 .editable-name {
     font-size: calc(11px * var(--font-scale));
@@ -290,12 +297,13 @@ body {
     transition: transform 0.4s ease;
     cursor: pointer;
 }
-.stack-item img { width: 100%; aspect-ratio: 1; object-fit: cover; filter: grayscale(100%); transition: filter 0.3s; }
+.stack-item img { width: 100%; aspect-ratio: 1; object-fit: cover; transition: transform 0.3s; }
 .stack-item:nth-child(1) { transform: rotate(-8deg) translateX(-20px); z-index: 1; }
 .stack-item:nth-child(2) { transform: rotate(5deg) translateX(20px); z-index: 2; }
 .stack-item:nth-child(3) { transform: rotate(-2deg); z-index: 3; }
 .stack-item:hover { z-index: 10; transform: scale(1.1) rotate(0deg); }
-.stack-item:hover img { filter: grayscale(0%); }
+
+
 
 /* === 底部 Dock === */
 .dock-bar {

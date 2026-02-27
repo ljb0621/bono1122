@@ -1935,7 +1935,7 @@ textarea#custom-css-input:focus {
 /* 装饰性图片，黑白滤镜 */
 .k-hero-banner::before {
     content: ''; position: absolute; top:0; right:0; width: 60%; height: 100%;
-    background: url('https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?q=80&w=400&auto=format&fit=crop') center/cover;
+    background: url('https://images.unsplash.com/photo-1485230946387-dd33314715fa?q=80&w=400&auto=format&fit=crop') center/cover;
     filter: grayscale(100%) contrast(1.2);
     opacity: 0.5;
     mask-image: linear-gradient(to right, transparent, black);
@@ -3649,14 +3649,20 @@ textarea#custom-css-input:focus {
    [新增] 线下模式 (Offline / Tavern Mode) - 韩系黑白风
    ========================================= */
 
+/* 1. 主容器：全屏 Flex 列布局 */
 .offline-mode-view {
-    position: absolute; inset: 0;
+    position: absolute; 
+    inset: 0;
     background: #fff;
-    z-index: 400; /* 比普通聊天层级高，覆盖在上面 */
+    z-index: 400; 
     transform: translateY(100%);
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex; flex-direction: column;
-    overflow: hidden;
+    
+    /* === 核心布局设定 === */
+    display: flex;
+    flex-direction: column; /* 垂直排列：头 -> 内容 -> 脚 */
+    overflow: hidden;       /* 禁止整个页面滚动，只让中间滚 */
+    height: 100%;           /* 确保撑满父容器 */
 }
 .offline-mode-view.show { transform: translateY(0); }
 
@@ -3670,13 +3676,20 @@ textarea#custom-css-input:focus {
 }
 
 /* 顶部设计 */
+/* 2. 顶部导航：固定高度，不许收缩 */
 .offline-header {
-    height: 100px; padding: 50px 24px 10px;
-    display: flex; justify-content: space-between; align-items: center;
+    height: 100px; 
+    padding: 50px 24px 10px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
     background: rgba(255,255,255,0.9);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(0,0,0,0.05);
-    flex-shrink: 0;
+    
+    /* === 核心修复 === */
+    flex-shrink: 0; /* 禁止被压缩 */
+    z-index: 10;
 }
 .oh-left, .oh-right { color: #111; cursor: pointer; opacity: 0.6; transition: 0.3s; width: 40px; text-align: center;}
 .oh-left:hover, .oh-right:hover { opacity: 1; }
@@ -3732,12 +3745,18 @@ textarea#custom-css-input:focus {
     font-weight: 700; color: #000;
 }
 
-/* 底部输入区 */
+/* 4. 底部输入区：固定底部，不许收缩 */
 .offline-input-area {
     background: #fff;
     padding: 15px 24px 40px;
     border-top: 1px solid rgba(0,0,0,0.05);
+    
+    /* === 核心修复 === */
+    flex-shrink: 0;  /* 禁止被压缩，确保输入框永远完整显示 */
+    position: relative;
+    z-index: 20;     /* 层级高于内容，防止内容穿透 */
 }
+
 .offline-tools {
     display: flex; gap: 15px; margin-bottom: 15px;
 }
@@ -4063,11 +4082,22 @@ textarea#custom-css-input:focus {
    [终极美化] 线下模式排版与玻璃拟态选项
    ========================================= */
 
-/* 1. 核心字体与排版美化 (保留并优化) */
+/* 3. 中间内容区：自动撑满剩余空间 */
 .offline-content {
-    padding: 30px 20px !important;
-    max-width: 100%;
+    /* === 核心修复 === */
+    flex: 1;                 /* 关键：占据所有剩余垂直空间 */
+    overflow-y: auto;        /* 关键：内容多时出现滚动条 */
+    min-height: 0;           /* 关键：防止Flex子元素溢出bug */
+    height: auto;            /* 重置高度，由 flex 控制 */
+    
+    padding: 20px 24px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* 移动端顺滑滚动 */
+    position: relative;
+    z-index: 1;
 }
+/* 隐藏滚动条样式 */
+.offline-content::-webkit-scrollbar { display: none; }
 
 .offline-entry {
     margin-bottom: 40px !important;
@@ -4633,3 +4663,381 @@ textarea#custom-css-input:focus {
 .id-avatar-preview-box img {
     width: 100%; height: 100%; object-fit: cover;
 }
+/* =========================================
+   [新增] Pay 钱包账单明细高级美化
+   ========================================= */
+
+.bill-card-modern {
+    background: #ffffff;
+    padding: 16px 20px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: transform 0.2s ease;
+}
+
+.bill-card-modern:active {
+    transform: scale(0.98);
+    background: #fdfdfd;
+}
+
+/* 左侧小图标圆圈 */
+.bill-icon-wrap {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+/* 收入图标（浅绿底绿字） */
+.bill-icon-in {
+    background: rgba(7, 193, 96, 0.1);
+    color: #07c160;
+}
+
+/* 支出图标（浅灰底黑字） */
+.bill-icon-out {
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* 标题与时间 */
+.bill-info-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.bill-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.bill-time {
+    font-size: 11px;
+    color: #aaa;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+/* 价格数字 */
+.bill-amount-wrap {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.bill-income-text {
+    color: #07c160;
+}
+
+.bill-expense-text {
+    color: #2b2b2b;
+}
+
+/* 彻底隐藏掉旧版的账单样式，防止冲突 */
+.bill-card-minimal { display: none !important; }
+/* =========================================
+   [终极韩系] 亲密付高级定制气泡卡片
+   ========================================= */
+.msg-intimate-card {
+    width: 250px !important;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 24px 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Montserrat', 'PingFang SC', sans-serif;
+    box-sizing: border-box;
+    margin: 5px 0;
+}
+
+/* 强制背景透明 */
+.message-bubble.rich-bubble .msg-intimate-card { color: #333; }
+
+/* 顶部圆形 Icon */
+.intimate-icon-wrap {
+    width: 52px; height: 52px;
+    background: #fcfcfc;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 20px; color: #2b2b2b;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 5px;
+}
+
+/* 标题和金额 */
+.intimate-title {
+    font-size: 11px; color: #999; font-weight: 600; letter-spacing: 1px;
+}
+.intimate-amount {
+    font-size: 32px; font-weight: 300; color: #111; line-height: 1; margin-bottom: 5px; letter-spacing: -1px;
+}
+
+/* 分割线 */
+.intimate-divider {
+    width: 100%; height: 1px; background: rgba(0,0,0,0.03); margin: 5px 0;
+}
+
+/* 底部按钮与状态 */
+.intimate-btn-group {
+    display: flex; gap: 10px; width: 100%;
+}
+.intimate-btn {
+    flex: 1; padding: 12px 0; border-radius: 14px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: 0.2s; letter-spacing: 0.5px;
+}
+.intimate-btn.black { background: #2b2b2b; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.intimate-btn.black:active { transform: scale(0.95); }
+.intimate-btn.gray { background: #f5f5f5; color: #888; }
+.intimate-btn.gray:active { background: #eee; }
+
+/* 锁定后的状态条 */
+.intimate-status {
+    width: 100%; padding: 12px 0; background: #fafafa; border-radius: 14px; font-size: 12px; color: #888; text-align: center; font-weight: 600; letter-spacing: 1px; border: 1px solid #f5f5f5;
+}
+.intimate-status.accepted { background: #fdfdfd; color: #333; border-color: #eee; }
+/* === 全局 Toast 提示 (窄弹窗) === */
+#k-global-toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(43, 43, 43, 0.95);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#k-global-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+/* =========================================
+   [全新韩系极简] 兼职中心 & 小游戏样式
+   ========================================= */
+
+/* 职业卡片 - 黑白灰风格 */
+.job-card-korean {
+    display: flex; align-items: center; gap: 15px;
+    padding: 22px 20px; margin-bottom: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+}
+.job-card-korean:active { transform: scale(0.98); background: #fdfdfd; }
+.job-k-icon {
+    width: 46px; height: 46px; border-radius: 14px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 18px; flex-shrink: 0;
+}
+.job-k-info { flex: 1; }
+.job-k-info .title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 5px; }
+.job-k-info .desc { font-size: 11px; color: #888; }
+.job-k-pay { font-size: 18px; font-weight: 300; font-family: 'Montserrat', sans-serif; color: #111; }
+
+/* 游戏通用容器 */
+.game-view-box {
+    display: none; 
+    width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0;
+}
+
+/* 游戏头部状态栏 */
+.game-k-header {
+    position: absolute; top: 0; left: 0; width: 100%;
+    padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+    z-index: 100; border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+.timer-box { font-weight: 700; font-family: 'Montserrat'; color: #111; font-size: 14px; display:flex; align-items:center; gap:5px;}
+.score-box { font-size: 13px; color: #555; }
+.btn-quit-game {
+    background: #f5f5f5; color: #555; border: none; border-radius: 12px;
+    padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
+}
+.btn-quit-game:active { background: #e0e0e0; }
+
+/* --- 游戏1：收银员 --- */
+#g1-belt {
+    width: 100%; height: 100%;
+    position: absolute; top: 0; left: 0;
+    overflow: hidden;
+    background: #fafafa;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,0,0,0.02) 40px, rgba(0,0,0,0.02) 80px); /* 斑马线模拟传送带 */
+}
+.g1-item {
+    position: absolute;
+    font-size: 45px;
+    cursor: pointer;
+    /* 核心修复：确保能被点到 */
+    z-index: 10;
+    animation: fallDown linear forwards;
+    user-select: none;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+.g1-item:active { transform: scale(1.3); opacity: 0.2; }
+@keyframes fallDown {
+    from { top: -60px; transform: rotate(0deg); }
+    to { top: 110%; transform: rotate(30deg); }
+}
+.g1-scanner-line {
+    position: absolute; top: 75%; left: 0; width: 100%; height: 2px;
+    background: rgba(255,0,0,0.5); 
+    box-shadow: 0 0 10px rgba(255,0,0,0.5);
+    pointer-events: none; z-index: 5;
+}
+
+/* --- 游戏2：咖啡师 --- */
+.g2-customer-bubble {
+    background: #fff; padding: 15px 20px; border-radius: 20px 20px 20px 4px;
+    border: 1px solid #eee; margin-bottom: 40px; margin-top: 60px;
+    font-size: 13px; font-weight: 600; color: #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    text-align: center; line-height: 1.5;
+}
+.g2-cup-area {
+    height: 140px; display: flex; justify-content: center; align-items: flex-end; margin-bottom: 40px;
+}
+#g2-cup {
+    width: 80px; height: 110px; border: 4px solid #ddd; border-top: none;
+    border-radius: 0 0 20px 20px; position: relative; overflow: hidden; background: rgba(255,255,255,0.8);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+}
+#g2-liquid {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+    background: #6F4E37; transition: height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s;
+}
+/* 新增：倒入配料的小图标显示区 */
+#g2-ingredients-display {
+    position: absolute; width: 100%; height: 100%; top:0; left:0;
+    display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start;
+    padding-bottom: 5px; gap: 2px; font-size: 18px; z-index: 2;
+}
+
+.g2-controls {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 30px; width: 100%; max-width: 320px;
+}
+.g2-controls button {
+    background: #fff; border: 1px solid #eee; padding: 12px 0;
+    border-radius: 16px; font-size: 22px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.g2-controls button span { font-size: 10px; color: #888; font-weight: 600; }
+.g2-controls button:active { background: #f5f5f5; transform: scale(0.9); }
+
+.g2-serve-btn {
+    width: 200px; height: 48px; background: #111; color: #fff;
+    border: none; border-radius: 24px; font-weight: 600; font-size: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); transition: 0.2s;
+}
+.g2-serve-btn:active { transform: scale(0.95); }
+
+/* --- 游戏3：黑客 --- */
+.g3-bar-container {
+    width: 280px; height: 24px; border: 2px solid #333;
+    border-radius: 12px; position: relative; overflow: hidden;
+    background: #222; margin-bottom: 50px;
+}
+.g3-target-zone {
+    position: absolute; top: 0; bottom: 0;
+    width: 40px; background: rgba(255, 255, 255, 0.2);
+    border-left: 2px solid #fff; border-right: 2px solid #fff;
+    /* 取消 transform 的 translateX，完全依赖 left 定位 */
+}
+.g3-cursor {
+    position: absolute; top: -2px; bottom: -2px; left: 0;
+    width: 4px; background: #ff4d4f;
+    box-shadow: 0 0 10px #ff4d4f;
+    border-radius: 2px;
+}
+.g3-lock-btn {
+    width: 140px; height: 140px; border-radius: 50%;
+    background: #111; border: 4px solid #333;
+    color: #fff; font-weight: 700; font-family: 'Montserrat', sans-serif;
+    font-size: 16px; cursor: pointer; letter-spacing: 2px;
+    transition: 0.1s;
+    display: flex; justify-content: center; align-items: center;
+}
+.g3-lock-btn:active { background: #222; border-color: #555; transform: scale(0.95); }
+/* =========================================
+   [新增] 模拟股市 韩系黑白灰风格
+   ========================================= */
+.stock-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.stock-card:active { transform: scale(0.98); background: #fdfdfd; }
+
+.stock-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.stock-name { font-size: 14px; font-weight: 700; color: #111; }
+.stock-code { font-size: 10px; color: #999; font-family: 'Montserrat', sans-serif; letter-spacing: 1px; }
+
+.stock-info-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+.stock-price { font-size: 16px; font-weight: 600; font-family: 'Montserrat', sans-serif; color: #111; }
+.stock-tag { 
+    font-size: 11px; 
+    font-weight: 700; 
+    padding: 3px 8px; 
+    border-radius: 6px; 
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* 黑白灰风格的涨跌：涨是深黑底白字，跌是浅灰底深灰字 */
+.stock-up { background: #111; color: #fff; }
+.stock-down { background: #f0f0f0; color: #555; }
+.stock-flat { background: #fafafa; color: #888; border: 1px solid #eee; }
+
+.stock-color-up { color: #111 !important; }
+.stock-color-down { color: #888 !important; }

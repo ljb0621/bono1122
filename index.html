@@ -53,9 +53,6 @@
                 <i class="fas fa-battery-three-quarters"></i>
             </div>
         </div>
-        <div id="danmaku-layer" class="danmaku-container"></div> 
-
-
           <div class="screen-container" id="screen">
             
     <!-- === 第一页 (P1): 主页 & 基础APP === -->
@@ -140,15 +137,15 @@
                 <div class="k-song-info">
                     <div class="k-play-btn"><i class="fas fa-play"></i></div>
                     <div style="flex:1;">
-                        <div contenteditable="true" class="k-song-title">Palette</div>
-                        <div contenteditable="true" class="k-artist">IU (아이유)</div>
+                        <div contenteditable="true" class="k-song-title" id="p3-song">Palette</div>
+<div contenteditable="true" class="k-artist" id="p3-artist">IU (아이유)</div>
                     </div>
                 </div>
             </div>
             <div class="k-polaroid">
                 <div class="k-tape"></div>
                 <div class="k-photo-frame" data-edit-key="k_polaroid_img" onclick="triggerChangeImage(this, 'bg')" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=300&auto=format&fit=crop');"></div>
-                <div class="k-handwriting" contenteditable="true">Vibe ☁️</div>
+                <div class="k-handwriting" contenteditable="true" id="p3-handwriting">Vibe ☁️</div>
             </div>
         </div>
 
@@ -551,6 +548,8 @@
     <span>剧情总结</span>
 </div>
 
+
+
             </div>
         </div>
     </div>
@@ -560,6 +559,7 @@
 
 
         </div>
+        <div id="danmaku-layer" class="danmaku-container" style="z-index: 4500;"></div>
 <!-- === [新增] 预设管理 APP === -->
 <div class="app-fullscreen-view" id="presetsApp">
     <div class="wc-header" style="background:#fff;">
@@ -2084,13 +2084,21 @@
     <!-- 主内容 -->
     <div class="k-body-container" style="padding: 10px 24px 30px; display: flex; flex-direction: column; gap: 20px;">
         
-        <!-- 顶部提示 -->
-        <div style="display:flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 12px; color: #999;">资产总览</span>
-            <div onclick="generateInitialWealthByAI()" id="btn-ai-wealth" style="font-size: 11px; color: #555; cursor:pointer; background: #eee; padding: 6px 12px; border-radius: 15px;">
-                <i class="fas fa-magic"></i> AI 测算身价
-            </div>
-        </div>
+       <!-- 顶部功能区：人设切换 + AI测算 -->
+<div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <!-- 人设切换按钮 (复用现有的弹窗) -->
+    <div onclick="openIdentityModal(event)" style="display:flex; align-items:center; gap:8px; background:#fff; padding:6px 12px; border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.03); cursor:pointer;">
+        <img id="pay-persona-avatar" src="" style="width:24px; height:24px; border-radius:50%; object-fit:cover;">
+        <span id="pay-persona-name" style="font-size:12px; font-weight:600; color:#333;">Me</span>
+        <i class="fas fa-caret-down" style="font-size:10px; color:#999;"></i>
+    </div>
+    
+    <!-- AI 测算按钮 -->
+    <div onclick="generateInitialWealthByAI()" id="btn-ai-wealth" style="font-size: 11px; color: #555; cursor:pointer; background: #eee; padding: 6px 12px; border-radius: 15px;">
+        <i class="fas fa-magic"></i> AI 测算身价
+    </div>
+</div>
+
 
         <!-- 1. 零钱卡片 (奶白风格) -->
         <div class="pay-korean-card">
@@ -2134,17 +2142,18 @@
                 <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
             </div>
 
-            <!-- 职业 -->
+                        <!-- 每月收入 -->
             <div class="pay-simple-item" onclick="openPaySubPage('career')">
                 <div class="pay-item-left">
-                    <div class="pay-icon-box"><i class="fas fa-user-tag"></i></div>
+                    <div class="pay-icon-box"><i class="fas fa-wallet"></i></div>
                     <div>
-                        <div class="pay-item-title">我的身份</div>
-                        <div class="pay-item-desc">设定工资/生活费发放</div>
+                        <div class="pay-item-title">每月收入</div>
+                        <div class="pay-item-desc">设定固定收入与发放日</div>
                     </div>
                 </div>
                 <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
             </div>
+
 
             <!-- 亲密付 -->
             <div class="pay-simple-item" onclick="openPaySubPage('intimate')">
@@ -2169,7 +2178,32 @@
                 </div>
                 <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
             </div>
+                        <!-- 模拟股市 -->
+            <div class="pay-simple-item" onclick="openPaySubPage('stock')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box" style="background:#111; color:#fff;"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <div class="pay-item-title">模拟股市</div>
+                        <div class="pay-item-desc">单车变摩托，别墅靠大海</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+                               <!-- === 新增：顶流造星企划 (高风险风投) === -->
+            <div class="pay-simple-item" onclick="openPaySubPage('idol_invest')">
+                <div class="pay-item-left">
+                    <div class="pay-icon-box" style="background:#111; color:#fff;"><i class="fas fa-user-astronaut"></i></div>
+                    <div>
+                        <div class="pay-item-title" style="font-weight: 800;">PROJECT: IDOL</div>
+                        <div class="pay-item-desc">投资地下练习生，捧出下一个世界级顶流</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="font-size:12px; color:#ddd;"></i>
+            </div>
+
+
         </div>
+        <button class="pay-pill-btn" style="width:100%; height:44px; background:#ff4d4f; margin-top:20px; box-shadow:0 5px 15px rgba(255,77,79,0.3);" onclick="resetPayData()">一键重置当前人设钱包</button>
     </div>
 
     <!-- === 子页面：账单 (全中文) === -->
@@ -2192,6 +2226,10 @@
             <div class="pay-korean-card" style="text-align:center; padding:40px 20px;">
                 <div style="font-size:12px; color:#999;">总资产 (元)</div>
                 <div style="font-size:40px; font-weight:300; color:#333; margin:10px 0;" id="yb-detail-balance">0.00</div>
+                <div style="margin-bottom: 15px;">
+        <span style="font-size:11px; color:#07c160; background:rgba(7,193,96,0.08); padding:3px 8px; border-radius:4px; font-weight:600;">七日年化 2.15%</span>
+    </div>
+
                 <div style="font-size:12px; color:#d4a373;">累计收益 +<span id="yb-total-profit">0.00</span></div>
                 
                 <div style="display:flex; justify-content:center; gap:15px; margin-top:30px;">
@@ -2204,22 +2242,17 @@
         </div>
     </div>
 
-    <!-- === 子页面：身份设置 === -->
+        <!-- === 子页面：每月收入 === -->
     <div id="pay-page-career" class="pay-sub-page" style="background:#fafafa;">
         <div class="k-header" style="background:#fff;">
             <i class="fas fa-chevron-left" onclick="closePaySubPage('career')" style="cursor:pointer; color:#333;"></i>
-            <span style="font-weight:700; color:#333;">身份设置</span><div style="width:20px;"></div>
+            <span style="font-weight:700; color:#333;">每月收入</span><div style="width:20px;"></div>
         </div>
         <div class="k-body-container" style="padding:20px;">
             <div class="pay-korean-card">
                 <div class="form-group">
-                    <label>当前身份</label>
-                    <select id="career-type-select" style="background:#f5f5f5; border:none;">
-                        <option value="student">学生 (领生活费)</option>
-                        <option value="rich">富二代 (领零花钱)</option>
-                        <option value="worker">打工人 (发工资)</option>
-                        <option value="freelance">自由职业 (结项目款)</option>
-                    </select>
+                    <label>收入来源 / 理由</label>
+                    <input type="text" id="career-source-input" placeholder="例如：生活费/工资/集团分红" style="background:#f5f5f5; border:none;">
                 </div>
                 <div class="form-group">
                     <label>每月发钱日期 (1-28号)</label>
@@ -2228,14 +2261,16 @@
                 <div class="form-group">
                     <label>每月金额 (元)</label>
                     <div style="display:flex; gap:10px;">
-                        <input type="number" id="career-amount-input" style="background:#f5f5f5; border:none;">
+                        <input type="number" id="career-amount-input" placeholder="例如：8000" style="background:#f5f5f5; border:none;">
                         <button class="pay-pill-btn outline" style="width:auto; white-space:nowrap;" onclick="generateCareerAmountByAI()" id="btn-gen-salary">AI测算</button>
                     </div>
                 </div>
-                <button class="pay-pill-btn" style="width:100%; height:44px; margin-top:10px;" onclick="saveCareerConfig()">保存设定</button>
+                <div style="font-size:10px; color:#999; margin-bottom: 15px;">*点击 AI测算，将根据你的人设自动推断收入与来源。</div>
+                <button class="pay-pill-btn" style="width:100%; height:44px;" onclick="saveCareerConfig()">保存设定</button>
             </div>
         </div>
     </div>
+
 
     <!-- === 子页面：亲密付 === -->
     <div id="pay-page-intimate" class="pay-sub-page" style="background:#fafafa;">
@@ -2250,21 +2285,248 @@
         </div>
     </div>
 
-    <!-- === 子页面：兼职 === -->
-    <div id="pay-page-parttime" class="pay-sub-page" style="background:#fff;">
-        <div class="k-header" style="background:transparent;">
-            <i class="fas fa-chevron-left" onclick="closePaySubPage('parttime')" style="cursor:pointer; color:#333;"></i>
-            <span style="font-weight:700; color:#333;">兼职打工</span><div style="width:20px;"></div>
+       <!-- === 子页面：兼职中心 (Job Center) === -->
+    <div id="pay-page-parttime" class="pay-sub-page" style="background:#fcfcfc;">
+        <!-- 顶部导航 -->
+        <div class="k-header" style="background:transparent; flex-shrink:0;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('parttime')" style="cursor:pointer; color:#111;"></i>
+            <span style="font-weight:700; color:#111; font-size:16px;">兼职打工</span>
+            <div style="width:20px;"></div>
         </div>
-        <div class="k-body-container" style="padding:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; height:80%;">
-            <div style="width:100px; height:100px; background:#f5f5f5; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:40px; margin-bottom:20px;">☕️</div>
-            <div style="font-size:16px; font-weight:700; color:#333;">咖啡店打杂</div>
-            <div style="font-size:12px; color:#999; margin-top:5px; margin-bottom:40px;">点击按钮干活，赚取微薄收入</div>
+
+        <!-- 职业选择列表 (Job Board) -->
+        <div id="pt-job-board" class="k-body-container" style="padding:20px; display:block;">
+            <div style="margin-bottom:25px;">
+                <div style="font-size:22px; font-weight:800; color:#111; margin-bottom:4px;">打工人，打工魂！</div>
+                <div style="font-size:11px; color:#888;">选个顺眼的活儿，赚点零花钱吧~</div>
+            </div>
+
+            <!-- 工作 1: 收银员 (韩系极简白) -->
+            <div class="job-card-korean" onclick="startJob(1)">
+                <div class="job-k-icon" style="background:#f5f5f5; color:#111;"><i class="fas fa-barcode"></i></div>
+                <div class="job-k-info">
+                    <div class="title">便利店收银员</div>
+                    <div class="desc">难度: ⭐ | 拼手速点掉商品</div>
+                </div>
+                <div class="job-k-pay">¥200</div>
+            </div>
+
+            <!-- 工作 2: 咖啡师 (韩系极简灰) -->
+            <div class="job-card-korean" onclick="startJob(2)" style="background:#f9f9f9;">
+                <div class="job-k-icon" style="background:#e0e0e0; color:#111;"><i class="fas fa-coffee"></i></div>
+                <div class="job-k-info">
+                    <div class="title">星级咖啡师</div>
+                    <div class="desc">难度: ⭐⭐⭐ | 记配方做饮料</div>
+                </div>
+                <div class="job-k-pay">¥2,000</div>
+            </div>
+
+            <!-- 工作 3: 黑客 (韩系极简黑) -->
+            <div class="job-card-korean" onclick="startJob(3)" style="background:#111; color:#fff;">
+                <div class="job-k-icon" style="background:#333; color:#fff;"><i class="fas fa-terminal"></i></div>
+                <div class="job-k-info">
+                    <div class="title" style="color:#fff;">网络安全专家</div>
+                    <div class="desc" style="color:#aaa;">难度: ⭐⭐⭐⭐⭐ | 精准锁信号</div>
+                </div>
+                <div class="job-k-pay" style="color:#fff;">¥8,000</div>
+            </div>
+        </div>
+
+        <!-- 游戏区域容器 (默认隐藏) -->
+        <div id="pt-game-stage" style="display:none; flex:1; flex-direction:column; position:relative; overflow:hidden;">
             
-            <button id="btn-work-hard" style="width:120px; height:120px; border-radius:50%; background:#333; color:#fff; border:none; font-size:16px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.1); cursor:pointer;" onpointerdown="this.style.transform='scale(0.95)'" onpointerup="this.style.transform='scale(1)'; doPartTimeWork();">干活！</button>
-            <div id="work-feedback" style="margin-top:20px; font-size:16px; font-weight:700; color:#d4a373; opacity:0; transition:0.3s;">+ ¥15.00</div>
+            <!-- 通用游戏头部 -->
+            <div class="game-k-header">
+                <div class="timer-box">
+                    <i class="far fa-clock"></i> <span id="game-timer">00:30</span>
+                </div>
+                <div class="score-box">
+                    成绩: <span id="game-score" style="font-weight:700;">0</span>
+                </div>
+                <button class="btn-quit-game" onclick="quitJob()">溜了溜了</button>
+            </div>
+
+            <!-- 游戏 1: 收银员 (掉落物品) -->
+            <div id="game-view-1" class="game-view-box">
+                <div style="position:absolute; top:20px; width:100%; text-align:center; color:#888; font-size:12px; z-index:5;">快点！客人等急了！(点击掉落物)</div>
+                <div id="g1-belt"></div> <!-- 传送带/掉落区 -->
+                <div class="g1-scanner-line"></div>
+            </div>
+
+            <!-- 游戏 2: 咖啡师 (配方制作) -->
+            <div id="game-view-2" class="game-view-box" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;">
+                <div class="g2-customer-bubble" id="g2-order-text">"我要一杯冰美式！(🧊 + 💧 + ☕️)"</div>
+                
+                <div class="g2-cup-area">
+                    <div id="g2-cup">
+                        <div id="g2-liquid"></div>
+                    </div>
+                </div>
+                
+                <!-- 可爱 Emoji 按钮 -->
+                <div class="g2-controls">
+                    <button onclick="g2Add('Espresso', '☕️')">☕️<br><span>浓缩</span></button>
+                    <button onclick="g2Add('Milk', '🥛')">🥛<br><span>牛奶</span></button>
+                    <button onclick="g2Add('Water', '💧')">💧<br><span>水</span></button>
+                    <button onclick="g2Add('Ice', '🧊')">🧊<br><span>冰块</span></button>
+                    <button onclick="g2Add('Syrup', '🍯')">🍯<br><span>糖浆</span></button>
+                </div>
+                
+                <button class="g2-serve-btn" onclick="g2Serve()">做好了！出餐 🛎️</button>
+            </div>
+
+            <!-- 游戏 3: 黑客 (信号校准) -->
+            <div id="game-view-3" class="game-view-box" style="background:#111; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                <div style="color:#fff; font-family:monospace; margin-bottom:20px; font-size:13px; letter-spacing:1px;">
+                    > 正在入侵防火墙... <span id="g3-level" style="font-weight:700;">层级 1/3</span>
+                </div>
+                <div style="color:#888; font-size:11px; margin-bottom:40px;">在红线重合白框时按下锁定</div>
+                
+                <div class="g3-bar-container">
+                    <div class="g3-target-zone" id="g3-target"></div>
+                    <div class="g3-cursor" id="g3-cursor"></div>
+                </div>
+
+                <button class="g3-lock-btn" onpointerdown="g3Lock()">锁定信号</button>
+                <div id="g3-msg" style="height:20px; font-size:12px; margin-top:20px; font-family:monospace; font-weight:700;"></div>
+            </div>
+
         </div>
     </div>
+    <!-- === 子页面：模拟股市 (韩系黑白灰) === -->
+    <div id="pay-page-stock" class="pay-sub-page" style="background:#fcfcfc;">
+        <div class="k-header" style="background:transparent; border-bottom:1px solid #f0f0f0;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('stock')" style="cursor:pointer; color:#111;"></i>
+            <span style="font-weight:700; color:#111; font-size:16px;">模拟股市</span>
+            <div style="width:20px;"></div>
+        </div>
+        <div class="k-body-container" style="padding:20px; display:flex; flex-direction:column; gap:15px;" id="stock-main-container">
+            <!-- 资产卡片 (极致黑白) -->
+            <div class="pay-korean-card" style="background:#111; color:#fff; border:none; padding:25px 20px;">
+                <div style="font-size:11px; color:#aaa; letter-spacing:1px;">持仓总市值 (¥)</div>
+                <div id="stock-total-value" style="font-size:32px; font-weight:300; font-family:'Montserrat', sans-serif; margin:10px 0; color:#fff;">0.00</div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:#ccc;">
+                    <span>可用零钱: ¥<span id="stock-available-balance">0.00</span></span>
+                    <span id="stock-total-profit" style="color:#fff;">浮动盈亏: +0.00</span>
+                </div>
+            </div>
+            
+            <div style="font-size:12px; font-weight:700; color:#333; margin-top:10px; display:flex; justify-content:space-between; align-items:center;">
+                <span>市场行情 (Market)</span>
+                <span style="font-size:10px; color:#999; font-weight:400; cursor:pointer;" onclick="refreshStockMarket()"><i class="fas fa-sync-alt"></i> 刷新行情</span>
+            </div>
+            
+            <!-- 股票列表 -->
+            <div id="stock-market-list" style="display:flex; flex-direction:column; gap:12px;">
+                <!-- JS 动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 股票交易详情与新闻弹窗 -->
+    <div id="stock-trade-modal" class="modal-overlay" style="z-index: 5000;">
+        <div class="modal-box" style="width:320px; border-radius:24px; padding:0; overflow:hidden;">
+            <div style="padding:20px; background:#fff; border-bottom:1px solid #f0f0f0;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div id="stm-name" style="font-size:18px; font-weight:800; color:#111;">公司名称</div>
+                        <div id="stm-code" style="font-size:10px; color:#999; font-family:'Montserrat'; letter-spacing:1px;">CODE</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div id="stm-price" style="font-size:24px; font-weight:700; font-family:'Montserrat';">0.00</div>
+                        <div id="stm-percent" style="font-size:12px; font-weight:600;">0.00%</div>
+                    </div>
+                </div>
+                <!-- 幽默新闻异动区块 -->
+                <div style="margin-top:15px; padding:12px; background:#f9f9f9; border-radius:12px; border-left:3px solid #111;">
+                    <div style="font-size:10px; color:#888; margin-bottom:4px; font-weight:700;">[市场快讯 / 异动原因]</div>
+                    <div id="stm-news" style="font-size:12px; color:#444; line-height:1.5;">暂无消息</div>
+                </div>
+            </div>
+            <div style="padding:20px; background:#fafafa;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:15px; color:#666;">
+                    <span>我的持仓: <b id="stm-holdings" style="color:#111;">0</b> 股</span>
+                    <span>持仓成本: <b id="stm-cost" style="color:#111;">0.00</b></span>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="number" id="stm-amount-input" placeholder="输入买卖股数..." style="flex:1; border:1px solid #ddd; border-radius:12px; padding:10px; text-align:center; outline:none; font-family:inherit;">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button onclick="executeStockTrade('sell')" style="flex:1; padding:12px 0; border-radius:16px; border:1px solid #111; background:#fff; color:#111; font-weight:700; cursor:pointer;">卖出 (Sell)</button>
+                    <button onclick="executeStockTrade('buy')" style="flex:1; padding:12px 0; border-radius:16px; border:none; background:#111; color:#fff; font-weight:700; cursor:pointer;">买入 (Buy)</button>
+                </div>
+                <div style="text-align:center; margin-top:15px;">
+                    <span onclick="document.getElementById('stock-trade-modal').classList.remove('active')" style="font-size:12px; color:#999; cursor:pointer; text-decoration:underline;">取消交易</span>
+                </div>
+            </div>
+        </div>
+    </div>
+          <!-- === 子页面：PROJECT: IDOL (高风险风投) === -->
+    <div id="pay-page-idol_invest" class="pay-sub-page" style="background:#fcfcfc;">
+        <div class="k-header" style="background:transparent; border-bottom:1px solid #f0f0f0;">
+            <i class="fas fa-chevron-left" onclick="closePaySubPage('idol_invest')" style="cursor:pointer; color:#111;"></i>
+            <span style="font-weight:800; font-family:'Montserrat', sans-serif; color:#111; font-size:14px; letter-spacing:1px;">PROJECT: IDOL</span>
+            <div style="width:20px;"></div>
+        </div>
+        
+        <div class="k-body-container" style="padding:20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
+            
+            <!-- 顶部黑白概念卡片 -->
+            <div style="background:#111; border-radius:24px; padding:35px 25px; text-align:center; color:#fff; position:relative; overflow:hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div style="position:absolute; top:-20px; left:-20px; font-size:120px; color:rgba(255,255,255,0.03); font-weight:900; font-family:'Montserrat'; pointer-events:none;">TOP</div>
+                
+                <i class="fas fa-gem" style="font-size:32px; margin-bottom:15px;"></i>
+                <div style="font-size:18px; font-weight:800; letter-spacing:2px; margin-bottom:10px;">寻找天降紫微星</div>
+                <div style="font-size:11px; color:#aaa; line-height:1.6; font-weight:300;">
+                    注资发掘素人练习生。<br>
+                    <b style="color:#fff;">90%</b> 概率练习生奇葩作妖，资金打水漂。<br>
+                    <b style="color:#fff;">10%</b> 概率全网爆红，连本带利奉还 10~50 倍。
+                </div>
+
+                <div style="background:rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size:9px; padding:8px; border-radius:8px; margin-top:20px; text-align:left;">
+                    <i class="fas fa-info-circle"></i> 商业风投有极大亏损风险。拒绝黄赌毒，本页面仅为财阀富婆的赛博模拟经营。
+                </div>
+            </div>
+
+            <!-- 操作台 -->
+            <div style="background:#fff; border-radius:24px; padding:25px 20px; box-shadow:0 4px 15px rgba(0,0,0,0.02); border:1px solid #f0f0f0;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:10px; color:#666; font-weight:600;">
+                    <span>财团可用资金：</span>
+                    <span style="color:#111;">¥ <span id="idol-available-balance">0.00</span></span>
+                </div>
+
+                <input type="number" id="idol-amount-input" placeholder="输入你想投资的金额..." style="width:100%; border:none; border-bottom:2px solid #eee; padding:15px 5px; outline:none; font-family:'Montserrat', sans-serif; font-size:18px; font-weight:700; margin-bottom:20px; transition:0.3s; background:transparent;" onfocus="this.style.borderBottomColor='#111';" onblur="this.style.borderBottomColor='#eee';">
+
+                <button id="idol-start-btn" class="pay-pill-btn" style="width:100%; height:48px; font-size:13px; font-weight:700; letter-spacing:1px; border-radius:12px;" onclick="prepareIdolProject()">确认注资</button>
+                
+                <!-- 隐藏的 3 个机密档案袋（用于盲选互动） -->
+                <div id="idol-files-area" style="display:none; margin-top:20px;">
+                    <div style="font-size:11px; color:#111; font-weight:700; text-align:center; margin-bottom:15px;">猎头已发来三份机密档案，请凭借直觉盲选一位：</div>
+                    <div style="display:flex; justify-content:space-between; gap:10px;">
+                        <div class="idol-file" onclick="openIdolFile(this)" style="flex:1; background:#f9f9f9; border:1px solid #ddd; border-radius:12px; padding:25px 0; text-align:center; cursor:pointer; transition:0.2s;">
+                            <i class="fas fa-folder-open" style="font-size:24px; color:#555; margin-bottom:8px;"></i><br><span style="font-size:10px; font-weight:700; color:#333;">FILE 01</span>
+                        </div>
+                        <div class="idol-file" onclick="openIdolFile(this)" style="flex:1; background:#f9f9f9; border:1px solid #ddd; border-radius:12px; padding:25px 0; text-align:center; cursor:pointer; transition:0.2s;">
+                            <i class="fas fa-folder-open" style="font-size:24px; color:#555; margin-bottom:8px;"></i><br><span style="font-size:10px; font-weight:700; color:#333;">FILE 02</span>
+                        </div>
+                        <div class="idol-file" onclick="openIdolFile(this)" style="flex:1; background:#f9f9f9; border:1px solid #ddd; border-radius:12px; padding:25px 0; text-align:center; cursor:pointer; transition:0.2s;">
+                            <i class="fas fa-folder-open" style="font-size:24px; color:#555; margin-bottom:8px;"></i><br><span style="font-size:10px; font-weight:700; color:#333;">FILE 03</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size:12px; font-weight:700; color:#111; margin-top:10px; letter-spacing:1px;">公司投资财报</div>
+            <div id="idol-history-list" style="display:flex; flex-direction:column; gap:10px;">
+                <div style="text-align:center; font-size:11px; color:#aaa; padding:20px;">尚无造星记录</div>
+            </div>
+            
+            <div style="height: 60px;"></div>
+        </div>
+    </div>
+
+
+
 </div>
 <!-- Pay 模块结束 -->
 
@@ -2379,6 +2641,34 @@
       <button class="btn-confirm" onclick="saveAndSwitchIdentity()">保存并切换</button>
     </div>
   </div>
+</div>
+<!-- === [新增] 钱包-开通亲密付弹窗 === -->
+<div id="modal-bind-intimate" class="modal-overlay">
+    <div class="modal-box" style="width:320px;">
+        <div class="modal-header">
+            <span>开通亲密付</span>
+            <i class="fas fa-times" onclick="document.getElementById('modal-bind-intimate').classList.remove('active')"></i>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>选择当前人设的AI好友</label>
+                <select id="intimate-ai-select" style="width:100%; height: 40px; border:1px solid #eee; border-radius:8px; padding:0 10px; background: #fff;"></select>
+            </div>
+            <div class="form-group">
+                <label>设置每月额度 (元)</label>
+                <div style="display:flex; gap:10px; margin-bottom: 10px;">
+                    <button class="btn-secondary" onclick="document.getElementById('intimate-limit-input').value='520'">520</button>
+                    <button class="btn-secondary" onclick="document.getElementById('intimate-limit-input').value='5200'">5200</button>
+                    <button class="btn-secondary" onclick="document.getElementById('intimate-limit-input').value='无限'">无限额</button>
+                </div>
+                <input type="text" id="intimate-limit-input" placeholder="输入自定义数字或填写 '无限'" style="width:100%; height: 40px; border:1px solid #eee; border-radius:8px; padding:0 15px; font-size:14px; box-sizing:border-box;">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="document.getElementById('modal-bind-intimate').classList.remove('active')">取消</button>
+            <button class="btn-confirm" onclick="confirmBindIntimate()">确定开通</button>
+        </div>
+    </div>
 </div>
 
 
