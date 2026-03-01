@@ -461,3 +461,60 @@ input:checked + .slider:before { transform: translateX(18px); }
     color: var(--theme-text-color); /* 应用当前选择的颜色 */
     transition: all 0.3s;
 }
+/* =========================================
+   [新增] 响应式与全面屏模式补丁
+   ========================================= */
+
+/* 1. 全面屏模式 (由 JS 控制 .fullscreen-mode 类加在 body 上) */
+body.fullscreen-mode .phone {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
+/* 全面屏时，背景动画隐藏，或者也可以保留，看你喜好 */
+body.fullscreen-mode .ambient-bg {
+    display: none;
+}
+
+/* 2. 移动端浏览器自适应 (屏幕宽度小于 500px 时自动铺满) */
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start; /* 顶端对齐 */
+        background-color: #000;  /* 移动端背景变黑，更沉浸 */
+    }
+
+    .phone {
+        width: 100vw;
+        height: 100dvh; /* 使用 dvh 解决移动端地址栏遮挡问题 */
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .ambient-bg {
+        display: none; /* 手机上为了性能和视觉，隐藏外部光斑 */
+    }
+    
+    /* 调整底部 App 的位置，防止被某些浏览器的底栏遮挡 */
+    .page {
+        padding-bottom: 140px; /* 增加底部内边距 */
+    }
+    
+    .dock-bar {
+        bottom: 20px; /* Dock 稍微抬高一点 */
+    }
+}
+
+/* 3. 修复有的浏览器看到外部边框的问题 */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 禁止外部滚动条 */
+}
